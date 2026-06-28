@@ -6,7 +6,7 @@ from medical_records.models import MedicalRecord
 from .serializers import HospitalSerializer, PatientSerializer, DoctorSerializer, MedicalRecordSerializer
 
 class PatientListCreateView(generics.ListCreateAPIView):
-    queryset = Patient.object.all()
+    queryset = Patient.objects.all()
     serializer_class = PatientSerializer
 
 class PatientDetailView(generics.RetrieveUpdateDestroyAPIView):
