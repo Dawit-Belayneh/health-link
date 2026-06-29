@@ -1,10 +1,10 @@
 from django.db import models
-from users.models import User
 from hospitals.models import Hospital
+from django.conf import settings
 
 class Doctor(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE, related_name="doctors")
     specialization = models.CharField(max_length=100)
 
     def __str__(self):
