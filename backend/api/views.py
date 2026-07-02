@@ -3,8 +3,10 @@ from hospitals.models import Hospital
 from patients.models import Patient
 from doctors.models import Doctor
 from medical_records.models import MedicalRecord
-from .serializers import HospitalSerializer, PatientSerializer, DoctorSerializer, MedicalRecordSerializer
+from .serializers import HospitalSerializer, PatientSerializer, DoctorSerializer, MedicalRecordSerializer, RegisterSerializer
 
+class RegisterView(generics.CreateAPIView):
+    serializer_class = RegisterSerializer
 class PatientListCreateView(generics.ListCreateAPIView):
     queryset = Patient.objects.all()
     serializer_class = PatientSerializer
