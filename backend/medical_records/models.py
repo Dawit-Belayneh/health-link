@@ -8,3 +8,6 @@ class MedicalRecord(models.Model):
     diagnosis = models.TextField()
     treatment = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
+    prescription = models.TextField(blank=True)
+    notes = models.TextField(blank=True)
+    visit_date = models.DateTimeField(auto_now_add=True)
