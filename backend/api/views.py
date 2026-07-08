@@ -6,11 +6,21 @@ from medical_records.models import MedicalRecord
 from .serializers import HospitalSerializer, PatientSerializer, DoctorSerializer, MedicalRecordSerializer, RegisterSerializer
 from .permissions import IsPatient, IsHospitalStaff, IsAdmin
 from rest_framework.permissions import IsAuthenticated
-
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
 class PatientListCreateView(generics.ListCreateAPIView):
     queryset = Patient.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = [
+        'user',
+        'date_of_birth',
+        'gender',
+        'blood_type',
+        'allergies',
+        'medical_history',
+    ]
     serializer_class = PatientSerializer
     permission_classes = [IsAuthenticated, IsPatient]
 
