@@ -1,0 +1,195 @@
+.cta-section{
+
+    padding:110px 20px;
+
+    background:linear-gradient(
+        135deg,
+        #2563eb,
+        #1d4ed8,
+        #0f172a
+    );
+
+}
+
+.cta-container{
+
+    max-width:900px;
+
+    margin:auto;
+
+    text-align:center;
+
+    color:white;
+
+}
+
+.cta-badge{
+
+    display:inline-block;
+
+    padding:10px 24px;
+
+    background:rgba(255,255,255,.15);
+
+    border:1px solid rgba(255,255,255,.25);
+
+    border-radius:999px;
+
+    font-weight:600;
+
+    margin-bottom:25px;
+
+    backdrop-filter:blur(8px);
+
+}
+
+.cta-container h2{
+
+    font-size:52px;
+
+    line-height:1.2;
+
+    margin-bottom:25px;
+
+}
+
+.cta-container p{
+
+    font-size:19px;
+
+    line-height:1.9;
+
+    color:rgba(255,255,255,.92);
+
+    max-width:720px;
+
+    margin:auto;
+
+}
+
+.cta-buttons{
+
+    margin-top:45px;
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:20px;
+
+    flex-wrap:wrap;
+
+}
+
+.primary-btn{
+
+    background:white;
+
+    color:#2563eb;
+
+    border:none;
+
+    padding:16px 36px;
+
+    font-size:17px;
+
+    font-weight:700;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.primary-btn:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:0 18px 35px rgba(255,255,255,.25);
+
+}
+
+.secondary-btn{
+
+    background:transparent;
+
+    color:white;
+
+    border:2px solid rgba(255,255,255,.6);
+
+    padding:16px 36px;
+
+    font-size:17px;
+
+    font-weight:700;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.secondary-btn:hover{
+
+    background:white;
+
+    color:#2563eb;
+
+    transform:translateY(-5px);
+
+}
+
+/* Tablet */
+
+@media(max-width:992px){
+
+.cta-container h2{
+
+    font-size:42px;
+
+}
+
+}
+
+/* Mobile */
+
+@media(max-width:768px){
+
+.cta-section{
+
+    padding:80px 20px;
+
+}
+
+.cta-container h2{
+
+    font-size:34px;
+
+}
+
+.cta-container p{
+
+    font-size:16px;
+
+}
+
+.cta-buttons{
+
+    flex-direction:column;
+
+    align-items:center;
+
+}
+
+.primary-btn,
+.secondary-btn{
+
+    width:240px;
+
+}
+
+}
