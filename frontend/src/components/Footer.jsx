@@ -76,7 +76,7 @@ function Footer() {
 
                     <ul>
 
-                        <li>📍 Adama, Ethiopia</li>
+                        <li>📍 Addis Abeba, Ethiopia</li>
 
                         <li>📧 support@healthlink.com</li>
 
