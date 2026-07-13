@@ -31,14 +31,23 @@ function Login(){
 
             const data=await loginUser(formData);
 
+            localStorage.setItem("access", data.access);
+            localStorage.setItem("refresh", data.refresh);
+
+            console.log("Login successful!");
             console.log(data);
 
         }
 
-        catch(error){
+        catch (error) {
+            console.log("Full Error:", error);
 
-            console.log(error.response.data);
-
+            if (error.response) {
+                console.log("Status:", error.response.status);
+                console.log("Data:", error.response.data);
+            } else {
+                console.log("Message:", error.message);
+            }
         }
 
     };
