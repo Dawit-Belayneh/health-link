@@ -8,8 +8,10 @@ from .permissions import IsPatient, IsHospitalStaff, IsAdmin
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
+
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
+    
 class PatientListCreateView(generics.ListCreateAPIView):
     queryset = Patient.objects.all()
     filter_backends = [DjangoFilterBackend]
