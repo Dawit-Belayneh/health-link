@@ -1,140 +1,64 @@
-import Sidebar from "../components/Sidebar";
-import Topbar from "../components/Topbar";
-import DashboardCard from "../components/DashboardCard";
 import "./PatientDashboard.css";
 
+import Sidebar from "../components/Sidebar";
+import Topbar from "../components/Topbar";
+import WelcomeBanner from "../components/WelcomeBanner";
+import DashboardCards from "../components/DashboardCards";
+import HealthOverview from "../components/HealthOverview";
+import AppointmentCard from "../components/AppointmentCard";
+import MedicalTable from "../components/MedicalTable";
+import PrescriptionCard from "../components/PrescriptionCard";
+import NotificationPanel from "../components/NotificationPanel";
+import EmergencyCard from "../components/EmergencyCard";
+import Timeline from "../components/Timeline";
+import Footer from "../components/Footer";
+
 function PatientDashboard() {
-
-    const cards = [
-        {
-            title: "Medical Records",
-            value: "12",
-            icon: "📄"
-        },
-        {
-            title: "Doctors Visited",
-            value: "5",
-            icon: "👨‍⚕️"
-        },
-        {
-            title: "Medications",
-            value: "3",
-            icon: "💊"
-        },
-        {
-            title: "Appointments",
-            value: "2",
-            icon: "📅"
-        }
-    ];
-
     return (
-        <div className="dashboard">
+        <div className="patient-dashboard">
 
             <Sidebar />
 
-            <div className="dashboard-content">
+            <main className="dashboard-main">
 
                 <Topbar />
 
-                <div className="cards">
+                <WelcomeBanner />
 
-                    {cards.map((card, index) => (
-                        <DashboardCard
-                            key={index}
-                            title={card.title}
-                            value={card.value}
-                            icon={card.icon}
-                        />
-                    ))}
+                <DashboardCards />
 
-                </div>
+                <section className="dashboard-row">
 
-                <div className="dashboard-grid">
+                    <HealthOverview />
 
-                    <div className="profile-card">
+                    <AppointmentCard />
 
-                        <h2>Patient Information</h2>
+                </section>
 
-                        <p><strong>Name:</strong> Dawit Belayneh</p>
+                <section className="dashboard-row">
 
-                        <p><strong>Blood Type:</strong> O+</p>
+                    <MedicalTable />
 
-                        <p><strong>Phone:</strong> +251900000000</p>
+                    <NotificationPanel />
 
-                        <p><strong>Email:</strong> dawit@gmail.com</p>
+                </section>
 
-                        <p><strong>Allergies:</strong> Penicillin</p>
+                <section className="dashboard-row">
 
-                    </div>
+                    <PrescriptionCard />
 
-                    <div className="emergency-card">
+                    <EmergencyCard />
 
-                        <h2>Emergency Contact</h2>
+                </section>
 
-                        <p><strong>Name:</strong> Abebe</p>
+                <Timeline />
 
-                        <p><strong>Relationship:</strong> Brother</p>
+                <Footer />
 
-                        <p><strong>Phone:</strong> +251911111111</p>
-
-                    </div>
-
-                </div>
-
-                <div className="records">
-
-                    <h2>Recent Medical Records</h2>
-
-                    <table>
-
-                        <thead>
-
-                            <tr>
-
-                                <th>Date</th>
-
-                                <th>Doctor</th>
-
-                                <th>Diagnosis</th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            <tr>
-
-                                <td>10 Jul 2026</td>
-
-                                <td>Dr. Abel</td>
-
-                                <td>Malaria</td>
-
-                            </tr>
-
-                            <tr>
-
-                                <td>15 Jun 2026</td>
-
-                                <td>Dr. Hana</td>
-
-                                <td>Flu</td>
-
-                            </tr>
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
+            </main>
 
         </div>
     );
-
 }
 
 export default PatientDashboard;

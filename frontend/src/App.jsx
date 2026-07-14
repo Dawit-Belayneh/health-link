@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-// import PatientDashboard from "./pages/PatientDashboard";
+import PatientDashboard from "./pages/PatientDashboard";
 // import DoctorDashboard from "./pages/DoctorDashboard";
 // import AdminDashboard from "./pages/AdminDashboard";
 // import Profile from "./pages/Profile";
@@ -20,10 +20,10 @@ function App() {
 
         <Route path="/signup" element={<Signup />} />
 
-        {/* <Route
+        <Route
           path="/patient/dashboard"
           element={<PatientDashboard />}
-        /> */}
+        />
 
         {/* <Route
           path="/doctor/dashboard"
