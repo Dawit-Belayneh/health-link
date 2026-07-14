@@ -1,0 +1,105 @@
+.dashboard{
+
+    display:flex;
+
+    background:#f5f7fb;
+
+    min-height:100vh;
+
+}
+
+.dashboard-content{
+
+    flex:1;
+
+    padding:30px;
+
+}
+
+.cards{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+    gap:20px;
+
+    margin:25px 0;
+
+}
+
+.dashboard-grid{
+
+    display:grid;
+
+    grid-template-columns:2fr 1fr;
+
+    gap:20px;
+
+}
+
+.profile-card,
+.emergency-card{
+
+    background:white;
+
+    border-radius:15px;
+
+    padding:25px;
+
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+}
+
+.records{
+
+    margin-top:30px;
+
+    background:white;
+
+    border-radius:15px;
+
+    padding:25px;
+
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+}
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    margin-top:20px;
+
+}
+
+th,
+td{
+
+    padding:15px;
+
+    text-align:left;
+
+    border-bottom:1px solid #ddd;
+
+}
+
+th{
+
+    background:#2563eb;
+
+    color:white;
+
+}
+
+@media(max-width:900px){
+
+.dashboard-grid{
+
+    grid-template-columns:1fr;
+
+}
+
+}
