@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-// import Signup from "./pages/Signup";
+import Signup from "./pages/Signup";
 // import PatientDashboard from "./pages/PatientDashboard";
 // import DoctorDashboard from "./pages/DoctorDashboard";
 // import AdminDashboard from "./pages/AdminDashboard";
@@ -18,31 +18,31 @@ function App() {
 
         <Route path="/login" element={<Login />} />
 
-        {/* <Route path="/signup" element={<Signup />} />
+        <Route path="/signup" element={<Signup />} />
 
-        <Route
+        {/* <Route
           path="/patient/dashboard"
           element={<PatientDashboard />}
-        />
+        /> */}
 
-        <Route
+        {/* <Route
           path="/doctor/dashboard"
           element={<DoctorDashboard />}
-        />
+        /> */}
 
-        <Route
+        {/* <Route
           path="/admin/dashboard"
           element={<AdminDashboard />}
-        />
+        /> */}
 
-        <Route path="/profile" element={<Profile />} />
+        {/* <Route path="/profile" element={<Profile />} /> */}
 
-        <Route
+        {/* <Route
           path="/medical-records"
           element={<MedicalRecords />}
-        />
+        /> */}
 
-        <Route path="*" element={<NotFound />} /> */}
+        {/* <Route path="*" element={<NotFound />} />  */}
 
       </Routes>
     </BrowserRouter>

@@ -10,3 +10,9 @@ export const loginUser = async (data) => {
     return response.data;
 
 };
+
+
+export const signupUser = async (data) => {
+    const response = await api.post("signup/", data);
+    return response.data;
+};
