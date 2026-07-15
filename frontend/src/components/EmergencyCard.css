@@ -1,0 +1,259 @@
+.emergency-card{
+
+    background:white;
+
+    border-radius:24px;
+
+    padding:30px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.emergency-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:25px;
+
+}
+
+.emergency-header h2{
+
+    color:#0f172a;
+
+}
+
+.emergency-badge{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    background:#dcfce7;
+
+    color:#15803d;
+
+    padding:8px 16px;
+
+    border-radius:30px;
+
+    font-size:14px;
+
+    font-weight:600;
+
+}
+
+.emergency-contact{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+    padding:18px;
+
+    border-radius:18px;
+
+    background:#eff6ff;
+
+    margin-bottom:25px;
+
+}
+
+.contact-avatar{
+
+    width:65px;
+
+    height:65px;
+
+    border-radius:50%;
+
+    background:#2563eb;
+
+    color:white;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:22px;
+
+    font-weight:700;
+
+}
+
+.emergency-contact h3{
+
+    color:#0f172a;
+
+    margin-bottom:4px;
+
+}
+
+.emergency-contact p{
+
+    color:#64748b;
+
+}
+
+.emergency-details{
+
+    display:grid;
+
+    gap:16px;
+
+    margin-bottom:28px;
+
+}
+
+.detail-item{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    padding:16px;
+
+    border-radius:14px;
+
+    background:#f8fafc;
+
+    transition:.3s;
+
+}
+
+.detail-item:hover{
+
+    background:#eff6ff;
+
+    transform:translateX(5px);
+
+}
+
+.detail-item svg{
+
+    color:#2563eb;
+
+    flex-shrink:0;
+
+}
+
+.detail-item h4{
+
+    color:#64748b;
+
+    font-size:14px;
+
+    margin-bottom:4px;
+
+}
+
+.detail-item p{
+
+    color:#0f172a;
+
+    font-weight:600;
+
+}
+
+.emergency-btn{
+
+    width:100%;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:#ef4444;
+
+    color:white;
+
+    padding:16px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:10px;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.emergency-btn:hover{
+
+    background:#dc2626;
+
+    transform:translateY(-2px);
+
+}
+
+/* Tablet */
+
+@media(max-width:992px){
+
+.emergency-card{
+
+    padding:24px;
+
+}
+
+}
+
+/* Mobile */
+
+@media(max-width:768px){
+
+.emergency-header{
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+    gap:12px;
+
+}
+
+.emergency-contact{
+
+    flex-direction:column;
+
+    text-align:center;
+
+}
+
+.contact-avatar{
+
+    width:60px;
+
+    height:60px;
+
+}
+
+.detail-item{
+
+    padding:14px;
+
+}
+
+}

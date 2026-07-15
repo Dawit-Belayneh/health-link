@@ -1,0 +1,227 @@
+.notification-panel{
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:24px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.notification-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:25px;
+
+}
+
+.notification-header h2{
+
+    color:#0f172a;
+
+    margin-bottom:4px;
+
+}
+
+.notification-header p{
+
+    color:#64748b;
+
+    font-size:14px;
+
+}
+
+.notification-count{
+
+    width:46px;
+
+    height:46px;
+
+    border-radius:50%;
+
+    background:#2563eb;
+
+    color:white;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:4px;
+
+    font-weight:600;
+
+}
+
+.notification-list{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:16px;
+
+}
+
+.notification-item{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+    padding:18px;
+
+    border-radius:18px;
+
+    background:#f8fafc;
+
+    transition:.3s;
+
+    cursor:pointer;
+
+}
+
+.notification-item:hover{
+
+    background:#eff6ff;
+
+    transform:translateX(5px);
+
+}
+
+.notification-item.unread{
+
+    border-left:5px solid #2563eb;
+
+    background:#f0f7ff;
+
+}
+
+.notification-icon{
+
+    width:52px;
+
+    height:52px;
+
+    border-radius:14px;
+
+    background:#2563eb;
+
+    color:white;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    flex-shrink:0;
+
+}
+
+.notification-content{
+
+    flex:1;
+
+}
+
+.notification-content h4{
+
+    color:#0f172a;
+
+    margin-bottom:6px;
+
+    font-size:16px;
+
+}
+
+.notification-content p{
+
+    color:#475569;
+
+    font-size:14px;
+
+    line-height:1.5;
+
+    margin-bottom:6px;
+
+}
+
+.notification-content span{
+
+    color:#94a3b8;
+
+    font-size:13px;
+
+}
+
+.notification-item > svg{
+
+    color:#94a3b8;
+
+}
+
+/* Tablet */
+
+@media(max-width:992px){
+
+.notification-panel{
+
+    padding:24px;
+
+}
+
+}
+
+/* Mobile */
+
+@media(max-width:768px){
+
+.notification-header{
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+    gap:15px;
+
+}
+
+.notification-item{
+
+    padding:16px;
+
+}
+
+.notification-icon{
+
+    width:46px;
+
+    height:46px;
+
+}
+
+.notification-content h4{
+
+    font-size:15px;
+
+}
+
+.notification-content p{
+
+    font-size:13px;
+
+}
+
+}

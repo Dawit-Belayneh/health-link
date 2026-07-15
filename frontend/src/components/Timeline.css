@@ -1,0 +1,255 @@
+.timeline-container{
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:24px;
+
+    box-shadow:
+    0 10px 25px rgba(0,0,0,.08);
+
+}
+
+
+.timeline-header{
+
+    margin-bottom:35px;
+
+}
+
+
+.timeline-header h2{
+
+    color:#0f172a;
+
+    margin-bottom:6px;
+
+}
+
+
+.timeline-header p{
+
+    color:#64748b;
+
+}
+
+
+/* Timeline */
+
+.timeline{
+
+    position:relative;
+
+    margin-left:20px;
+
+}
+
+
+.timeline::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:27px;
+
+    top:0;
+
+    width:3px;
+
+    height:100%;
+
+    background:#dbeafe;
+
+}
+
+
+
+.timeline-item{
+
+    position:relative;
+
+    display:flex;
+
+    gap:25px;
+
+    margin-bottom:35px;
+
+}
+
+
+
+/* Icon */
+
+.timeline-icon{
+
+    width:55px;
+
+    height:55px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:white;
+
+    z-index:1;
+
+    flex-shrink:0;
+
+}
+
+
+
+/* Different event colors */
+
+.doctor{
+
+    background:#2563eb;
+
+}
+
+
+.medicine{
+
+    background:#22c55e;
+
+}
+
+
+.lab{
+
+    background:#f59e0b;
+
+}
+
+
+.record{
+
+    background:#8b5cf6;
+
+}
+
+
+.visit{
+
+    background:#ef4444;
+
+}
+
+
+
+/* Content */
+
+.timeline-content{
+
+    background:#f8fafc;
+
+    padding:20px;
+
+    border-radius:18px;
+
+    flex:1;
+
+    transition:.3s;
+
+}
+
+
+.timeline-content:hover{
+
+    background:#eff6ff;
+
+    transform:translateX(5px);
+
+}
+
+
+.timeline-date{
+
+    color:#2563eb;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    margin-bottom:8px;
+
+}
+
+
+.timeline-content h3{
+
+    color:#0f172a;
+
+    margin-bottom:8px;
+
+}
+
+
+.timeline-content p{
+
+    color:#64748b;
+
+    line-height:1.6;
+
+}
+
+
+
+/* Tablet */
+
+@media(max-width:768px){
+
+
+.timeline-container{
+
+    padding:22px;
+
+}
+
+
+.timeline{
+
+    margin-left:0;
+
+}
+
+
+.timeline::before{
+
+    left:22px;
+
+}
+
+
+.timeline-item{
+
+    gap:18px;
+
+}
+
+
+.timeline-icon{
+
+    width:45px;
+
+    height:45px;
+
+}
+
+
+.timeline-content{
+
+    padding:15px;
+
+}
+
+
+
+}
