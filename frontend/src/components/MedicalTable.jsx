@@ -44,6 +44,51 @@ function MedicalTable() {
             department: "Orthopedics",
             diagnosis: "Knee Pain",
             status: "Follow-up"
+        },
+
+        {
+            id: 4,
+            date: "10 Jun 2026",
+            doctor: "Dr. David Smith",
+            department: "Orthopedics",
+            diagnosis: "Knee Pain",
+            status: "Follow-up"
+        },
+
+        {
+            id: 4,
+            date: "10 Jun 2026",
+            doctor: "Dr. David Smith",
+            department: "Orthopedics",
+            diagnosis: "Knee Pain",
+            status: "Follow-up"
+        },
+
+        {
+            id: 4,
+            date: "10 Jun 2026",
+            doctor: "Dr. David Smith",
+            department: "Orthopedics",
+            diagnosis: "Knee Pain",
+            status: "Follow-up"
+        },
+
+        {
+            id: 4,
+            date: "10 Jun 2026",
+            doctor: "Dr. David Smith",
+            department: "Orthopedics",
+            diagnosis: "Knee Pain",
+            status: "Follow-up"
+        },
+
+        {
+            id: 5,
+            date: "10 Jun 2050",
+            doctor: "Dr. David Smith",
+            department: "Orthopedics",
+            diagnosis: "Knee Pain",
+            status: "Follow-up"
         }
 
     ];

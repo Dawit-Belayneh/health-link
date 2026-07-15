@@ -1,4 +1,4 @@
-import "./DashboardCards.css";
+import "./DashboardCard.css";
 import {
     FileText,
     CalendarCheck2,

@@ -2,20 +2,21 @@
 
     width:280px;
 
-    min-height:100vh;
+    height:100vh;
 
     background:#ffffff;
 
     border-right:1px solid #e5e7eb;
 
-    display:flex;
-
-    flex-direction:column;
-
-    justify-content:space-between;
-
     position:sticky;
 
+    display: flex;
+
+    flex-direction:column;
+    overflow-y: auto;
+    justify-content:space-between;
+
+    z-index: 1000;
     top:0;
 
     left:0;
