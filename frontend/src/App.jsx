@@ -5,7 +5,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import PatientDashboard from "./pages/PatientDashboard";
-// import DoctorDashboard from "./pages/DoctorDashboard";
+import DoctorDashboard from "./pages/DoctorDashboard";
 // import AdminDashboard from "./pages/AdminDashboard";
 // import Profile from "./pages/Profile";
 // import MedicalRecords from "./pages/MedicalRecords";
@@ -25,10 +25,10 @@ function App() {
           element={<PatientDashboard />}
         />
 
-        {/* <Route
+        <Route
           path="/doctor/dashboard"
           element={<DoctorDashboard />}
-        /> */}
+        />
 
         {/* <Route
           path="/admin/dashboard"
