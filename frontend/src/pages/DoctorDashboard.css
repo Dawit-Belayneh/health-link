@@ -1,0 +1,142 @@
+/* ==========================
+   Dashboard Layout
+========================== */
+
+.doctor-dashboard{
+
+    display:flex;
+
+    min-height:100vh;
+
+    background:#f4f7fb;
+
+}
+
+
+/* ==========================
+   Main Content
+========================== */
+
+.doctor-main{
+
+    flex:1;
+
+    margin-left:260px;
+
+    padding:30px;
+
+    overflow-x:hidden;
+
+}
+
+
+/* ==========================
+   Grid
+========================== */
+
+.doctor-grid{
+
+    display:grid;
+
+    grid-template-columns:2fr 1fr;
+
+    gap:25px;
+
+    margin-top:25px;
+
+}
+
+
+.left-column{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:25px;
+
+}
+
+
+.right-column{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:25px;
+
+}
+
+
+/* ==========================
+   Card Style
+========================== */
+
+.left-column > *,
+.right-column > *{
+
+    background:white;
+
+    border-radius:22px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+
+/* ==========================
+   Large Screens
+========================== */
+
+@media(max-width:1200px){
+
+.doctor-grid{
+
+    grid-template-columns:1fr;
+
+}
+
+}
+
+
+/* ==========================
+   Tablet
+========================== */
+
+@media(max-width:992px){
+
+.doctor-main{
+
+    margin-left:220px;
+
+    padding:22px;
+
+}
+
+}
+
+
+/* ==========================
+   Mobile
+========================== */
+
+@media(max-width:768px){
+
+.doctor-main{
+
+    margin-left:0;
+
+    padding:18px;
+
+}
+
+.doctor-grid{
+
+    grid-template-columns:1fr;
+
+    gap:18px;
+
+}
+
+}
