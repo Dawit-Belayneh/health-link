@@ -3,13 +3,13 @@ import "./DoctorDashboard.css";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import WelcomeBanner from "../components/WelcomeBanner";
-// import DoctorStats from "../components/DoctorStats";
-// import AppointmentTable from "../components/AppointmentTable";
-// import PatientTable from "../components/PatientTable";
-// import MedicalRecordTable from "../components/MedicalRecordTable";
-// import QuickActions from "../components/QuickActions";
-// import NotificationPanel from "../components/NotificationPanel";
-// import CalendarCard from "../components/CalendarCard";
+import DoctorStats from "../components/doctor/DoctorStats";
+import AppointmentTable from "../components/doctor/AppointmentTable";
+import PatientTable from "../components/doctor/PatientTable";
+import MedicalRecordTable from "../components/doctor/MedicalRecordTable";
+import QuickActions from "../components/doctor/QuickActions";
+import NotificationPanel from "../components/doctor/NotificationPanel";
+import CalendarCard from "../components/CalendarCard";
 
 function DoctorDashboard() {
 
