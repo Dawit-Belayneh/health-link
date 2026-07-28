@@ -50,7 +50,7 @@
 
 .card:hover{
 
-    transform:translateY(-8px);
+    transform:translateY(-6px);
 
     box-shadow:0 18px 40px rgba(37,99,235,.15);
 
@@ -75,6 +75,8 @@
     color:white;
 
     margin-bottom:22px;
+
+    flex-shrink: 0;
 
 }
 

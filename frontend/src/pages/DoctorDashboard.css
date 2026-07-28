@@ -70,7 +70,7 @@
 
     display:grid;
 
-    grid-template-columns:minmax(0,2fr) 360px;
+    grid-template-columns:minmax(0,2fr) minmax(320px,380px);
 
     gap:25px;
 
