@@ -8,8 +8,9 @@ import AppointmentTable from "../components/doctor/AppointmentTable";
 import PatientTable from "../components/doctor/PatientTable";
 import MedicalRecordTable from "../components/doctor/MedicalRecordTable";
 import QuickActions from "../components/doctor/QuickActions";
-import NotificationPanel from "../components/doctor/NotificationPanel";
+import NotificationPanel from "../components/NotificationPanel";
 import CalendarCard from "../components/CalendarCard";
+import Footer from "../components/Footer";
 
 function DoctorDashboard() {
 
@@ -50,6 +51,8 @@ function DoctorDashboard() {
                     </div>
 
                 </div>
+
+                <Footer />
 
             </main>
 
