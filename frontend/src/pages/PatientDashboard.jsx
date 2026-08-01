@@ -27,31 +27,31 @@ function PatientDashboard() {
 
                 <DashboardCards />
 
-                <section className="dashboard-row">
+                <div className="dashboard-grid">
 
-                    <HealthOverview />
+                    <div className="left-column">
 
-                    <AppointmentCard />
+                        <HealthOverview />
 
-                </section>
+                        <MedicalTable />
 
-                <section className="dashboard-row">
+                        <Timeline />
 
-                    <MedicalTable />
+                    </div>
 
-                    <NotificationPanel />
+                    <div className="right-column">
 
-                </section>
+                        <AppointmentCard />
 
-                <section className="dashboard-row">
+                        <PrescriptionCard />
 
-                    <PrescriptionCard />
+                        <NotificationPanel />
 
-                    <EmergencyCard />
+                        <EmergencyCard />
 
-                </section>
+                    </div>
 
-                <Timeline />
+                </div>
 
                 <Footer />
 

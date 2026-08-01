@@ -60,6 +60,8 @@ body{
 
     overflow-x:hidden;
 
+    box-sizing: border-box;
+
 }
 
 
@@ -73,56 +75,77 @@ body{
 
 }
 
+/* ==========================
+   Dashboard Grid
+========================== */
 
-/* ===========================
-   TWO COLUMN LAYOUT
-=========================== */
-
-.dashboard-row{
+.dashboard-grid{
 
     display:grid;
 
-    grid-template-columns:2fr 1fr;
+    grid-template-columns:minmax(0,2fr) minmax(320px,380px);
 
     gap:25px;
 
+    align-items:start;
+
+    margin-top:25px;
+
 }
 
+/* Left Column */
 
-/* ===========================
-   CARD STYLE
-=========================== */
+.left-column{
 
-.dashboard-row>*{
+    display:flex;
+
+    flex-direction:column;
+
+    gap:25px;
+
+    min-width:0;
+
+}
+
+/* Right Column */
+
+.right-column{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:25px;
+
+    min-width:0;
+
+}
+
+/* Card Style */
+
+.left-column>*,
+.right-column>*{
 
     background:white;
 
-    border-radius:20px;
-
-    padding:25px;
+    border-radius:22px;
 
     box-shadow:0 10px 25px rgba(0,0,0,.08);
 
-}
-
-
-/* ===========================
-   HOVER EFFECT
-=========================== */
-
-.dashboard-row>*{
-
-    transition:.35s;
+    transition:.3s;
 
 }
 
-.dashboard-row>*:hover{
+.left-column>*:hover,
+.right-column>*:hover{
 
     transform:translateY(-4px);
 
-    box-shadow:0 18px 35px rgba(37,99,235,.12);
+    box-shadow:0 16px 35px rgba(37,99,235,.12);
 
 }
+
+
 
 
 /* ===========================
@@ -150,7 +173,7 @@ body{
 
 @media(max-width:1200px){
 
-.dashboard-row{
+.dashboard-grid{
 
     grid-template-columns:1fr;
 
