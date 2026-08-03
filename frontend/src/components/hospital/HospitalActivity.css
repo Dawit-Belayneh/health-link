@@ -1,0 +1,205 @@
+.hospital-activity{
+
+    padding:30px;
+
+}
+
+.activity-header{
+
+    margin-bottom:25px;
+
+}
+
+.activity-title{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+}
+
+.activity-title svg{
+
+    color:#2563eb;
+
+}
+
+.activity-title h2{
+
+    color:#0f172a;
+
+    margin-bottom:5px;
+
+}
+
+.activity-title p{
+
+    color:#64748b;
+
+}
+
+.activity-list{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+.activity-card{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+    padding:18px;
+
+    border-radius:16px;
+
+    background:#ffffff;
+
+    border:1px solid #eef2f7;
+
+    transition:.3s;
+
+}
+
+.activity-card:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 10px 25px rgba(37,99,235,.12);
+
+}
+
+.activity-icon{
+
+    width:55px;
+
+    height:55px;
+
+    border-radius:14px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:white;
+
+    flex-shrink:0;
+
+}
+
+.blue{
+
+    background:linear-gradient(135deg,#2563eb,#3b82f6);
+
+}
+
+.green{
+
+    background:linear-gradient(135deg,#16a34a,#22c55e);
+
+}
+
+.orange{
+
+    background:linear-gradient(135deg,#ea580c,#f59e0b);
+
+}
+
+.purple{
+
+    background:linear-gradient(135deg,#7c3aed,#a855f7);
+
+}
+
+.red{
+
+    background:linear-gradient(135deg,#dc2626,#ef4444);
+
+}
+
+.activity-content{
+
+    flex:1;
+
+}
+
+.activity-content h4{
+
+    color:#0f172a;
+
+    margin-bottom:6px;
+
+    font-size:16px;
+
+}
+
+.activity-content p{
+
+    color:#64748b;
+
+    font-size:14px;
+
+    line-height:1.5;
+
+}
+
+.activity-time{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:6px;
+
+    color:#64748b;
+
+    font-size:13px;
+
+    white-space:nowrap;
+
+}
+
+@media(max-width:768px){
+
+.activity-card{
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+}
+
+.activity-time{
+
+    margin-left:72px;
+
+}
+
+}
+
+@media(max-width:480px){
+
+.hospital-activity{
+
+    padding:20px;
+
+}
+
+.activity-time{
+
+    margin-left:0;
+
+}
+
+}
