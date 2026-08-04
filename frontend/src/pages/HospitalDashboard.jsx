@@ -9,8 +9,10 @@ import HospitalStats from "../components/hospital/HospitalStats";
 import DoctorManagementTable from "../components/hospital/DoctorManagementTable";
 import PatientManagementTable from "../components/hospital/PatientManagementTable";
 import HospitalQuickActions from "../components/hospital/HospitalQuickActions";
-import NotificationPanel from "../components/NotificationPanel";
-import CalendarCard from "../components/CalendarCard";
+import HospitalActivity from "../components/hospital/HospitalActivity";
+import HospitalCalendar from "../components/hospital/HospitalCalendar";
+import DepartmentCard from "../components/hospital/DepartmentCard";
+import RevenueCard from "../components/hospital/RevenueCard";
 
 function HospitalDashboard() {
 
@@ -28,6 +30,12 @@ function HospitalDashboard() {
 
                 <HospitalStats />
 
+                {/* Revenue */}
+                <RevenueCard />
+
+                {/* Department Overview */}
+                <DepartmentCard />
+
                 <div className="hospital-grid">
 
                     <div className="left-column">
@@ -36,15 +44,15 @@ function HospitalDashboard() {
 
                         <PatientManagementTable />
 
+                        <HospitalActivity />
+
                     </div>
 
                     <div className="right-column">
 
                         <HospitalQuickActions />
 
-                        <NotificationPanel />
-
-                        <CalendarCard />
+                        <HospitalCalendar />
 
                     </div>
 
@@ -61,4 +69,3 @@ function HospitalDashboard() {
 }
 
 export default HospitalDashboard;
-
