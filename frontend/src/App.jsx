@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import PatientDashboard from "./pages/PatientDashboard";
 import DoctorDashboard from "./pages/DoctorDashboard";
+import HospitalDashboard from "./pages/HospitalDashboard";
 // import AdminDashboard from "./pages/AdminDashboard";
 // import Profile from "./pages/Profile";
 // import MedicalRecords from "./pages/MedicalRecords";
@@ -29,6 +30,12 @@ function App() {
           path="/doctor/dashboard"
           element={<DoctorDashboard />}
         />
+
+        <Route
+          path="/hospital/dashboard"
+          element={<HospitalDashboard />}
+        />
+          
 
         {/* <Route
           path="/admin/dashboard"
