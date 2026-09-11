@@ -1,4 +1,5 @@
 import "./AppointmentCard.css";
+import { useNavigate } from "react-router-dom";
 import {
     UserRound,
     CalendarDays,
@@ -9,7 +10,13 @@ import {
     BadgeCheck
 } from "lucide-react";
 
-function AppointmentCard() {
+function AppointmentCard({ records = [] }) {
+    const navigate = useNavigate();
+
+    const firstRecord = records.length > 0 ? records[0] : null;
+    const docName = firstRecord?.doctor_name || firstRecord?.doctor || "Dr. Sarah Johnson";
+    const specialization = firstRecord?.doctor_specialization || firstRecord?.department || "Cardiology Specialist";
+    const hospital = firstRecord?.hospital_name || "HealthLink Central Hospital";
 
     return (
 
@@ -29,15 +36,15 @@ function AppointmentCard() {
             <div className="doctor-profile">
 
                 <img
-                    src="https://i.pravatar.cc/150?img=32"
-                    alt="Doctor"
+                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(docName)}&background=10b981&color=fff`}
+                    alt={docName}
                 />
 
                 <div>
 
-                    <h3>Dr. Sarah Johnson</h3>
+                    <h3>{docName}</h3>
 
-                    <p>Cardiology Specialist</p>
+                    <p>{specialization}</p>
 
                 </div>
 
@@ -89,12 +96,9 @@ function AppointmentCard() {
 
             <div className="appointment-actions">
 
-                <button className="primary-action">
-
+                <button className="primary-action" onClick={() => navigate("/appointments")}>
                     <FileText size={18}/>
-
                     View Details
-
                 </button>
 
                 <button className="secondary-action">

@@ -1,4 +1,5 @@
 import "./NotificationPanel.css";
+import { useNavigate } from "react-router-dom";
 import {
     Bell,
     CalendarDays,
@@ -9,6 +10,7 @@ import {
 } from "lucide-react";
 
 function NotificationPanel() {
+    const navigate = useNavigate();
 
     const notifications = [
 
@@ -54,7 +56,12 @@ function NotificationPanel() {
 
         <section className="notification-panel">
 
-            <div className="notification-header">
+            <div
+                className="notification-header"
+                style={{ cursor: "pointer" }}
+                onClick={() => navigate("/notifications")}
+                title="Open All Notifications"
+            >
 
                 <div>
 

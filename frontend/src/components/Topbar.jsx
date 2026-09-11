@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import "./Topbar.css";
 import {
     Menu,
@@ -6,7 +7,8 @@ import {
     ChevronDown
 } from "lucide-react";
 
-function Topbar() {
+function Topbar({ patient, onToggleSidebar }) {
+    const navigate = useNavigate();
 
     const today = new Date();
 
@@ -27,13 +29,16 @@ function Topbar() {
         year: "numeric",
     });
 
+    const firstName = patient?.user_details?.first_name || patient?.user_details?.username || "User";
+    const fullName = patient?.user_details?.full_name || patient?.user_details?.username || "Patient";
+
     return (
 
         <header className="topbar">
 
             <div className="topbar-left">
 
-                <button className="menu-btn">
+                <button className="menu-btn" onClick={onToggleSidebar} aria-label="Toggle navigation">
 
                     <Menu size={24} />
 
@@ -41,7 +46,7 @@ function Topbar() {
 
                 <div>
 
-                    <h2>{greeting}, Dawit 👋</h2>
+                    <h2>{greeting}, {firstName} 👋</h2>
 
                     <p>
                         Stay healthy. Your medical information is always available.
@@ -83,16 +88,22 @@ function Topbar() {
 
                 </div>
 
-                <div className="profile">
+                <div
+                    className="profile"
+                    onClick={() => navigate("/profile")}
+                    title="View & Edit Profile"
+                    role="button"
+                    tabIndex={0}
+                >
 
                     <img
-                        src="https://i.pravatar.cc/100"
+                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=2563eb&color=fff`}
                         alt="profile"
                     />
 
                     <div>
 
-                        <h4>Dawit Belayneh</h4>
+                        <h4>{fullName}</h4>
 
                         <span>Patient</span>
 

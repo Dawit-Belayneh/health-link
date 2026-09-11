@@ -9,67 +9,64 @@ import {
 } from "lucide-react";
 
 
-function Timeline(){
+function Timeline({ records = [] }) {
 
-    const events = [
+    const formatDate = (dateStr) => {
+        if (!dateStr) return "Recent";
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr;
+        return d.toLocaleDateString("en-US", {
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        });
+    };
 
-        {
-            id:1,
-            title:"Medical Consultation",
-            description:
-            "Visited Dr. Sarah Johnson for cardiology checkup.",
-            date:"12 July 2026",
-            icon:<Stethoscope size={22}/>,
-            type:"doctor"
-        },
+    // Dynamically build healthcare events from patient's medical records
+    const dynamicEvents = [];
 
-        {
-            id:2,
-            title:"Prescription Added",
-            description:
-            "New medication Amoxicillin 500mg was prescribed.",
-            date:"12 July 2026",
-            icon:<Pill size={22}/>,
-            type:"medicine"
-        },
+    records.forEach((record, idx) => {
+        const docName = record.doctor_name || record.doctor || "Dr. HealthLink";
+        const formattedDate = formatDate(record.date || record.visit_date);
 
-        {
-            id:3,
-            title:"Laboratory Test",
-            description:
-            "Blood test results were uploaded to your medical record.",
-            date:"08 July 2026",
-            icon:<TestTube size={22}/>,
-            type:"lab"
-        },
+        // Medical Consultation Event
+        dynamicEvents.push({
+            id: `diag-${record.id || idx}`,
+            title: `Consultation: ${record.diagnosis}`,
+            description: `Attended by ${docName} (${record.doctor_specialization || "General Medicine"}). Treatment plan: ${record.treatment || "Monitoring"}.`,
+            date: formattedDate,
+            icon: <Stethoscope size={22}/>,
+            type: "doctor"
+        });
 
-        {
-            id:4,
-            title:"Medical Record Updated",
-            description:
-            "Your allergy information was updated.",
-            date:"01 July 2026",
-            icon:<FileText size={22}/>,
-            type:"record"
-        },
-
-        {
-            id:5,
-            title:"Hospital Visit",
-            description:
-            "Emergency department visit completed.",
-            date:"20 June 2026",
-            icon:<CalendarDays size={22}/>,
-            type:"visit"
+        // Prescription Event if present
+        if (record.prescription && record.prescription.trim()) {
+            dynamicEvents.push({
+                id: `rx-${record.id || idx}`,
+                title: "Prescription Issued",
+                description: `Prescribed by ${docName}: ${record.prescription}`,
+                date: formattedDate,
+                icon: <Pill size={22}/>,
+                type: "medicine"
+            });
         }
+    });
 
+    // Fallback if no records exist yet
+    const events = dynamicEvents.length > 0 ? dynamicEvents : [
+        {
+            id: "welcome",
+            title: "Welcome to HealthLink",
+            description: "Your health journey begins here. Medical records added by doctors will show up here.",
+            date: "Today",
+            icon: <FileText size={22}/>,
+            type: "record"
+        }
     ];
-
 
     return(
 
         <section className="timeline-container">
-
 
             <div className="timeline-header">
 
@@ -78,25 +75,20 @@ function Timeline(){
                 </h2>
 
                 <p>
-                    Your complete healthcare journey
+                    Your complete healthcare journey ({events.length} milestones)
                 </p>
 
             </div>
 
-
-
             <div className="timeline">
-
 
                 {
                     events.map((event)=>(
-
 
                         <div
                             className="timeline-item"
                             key={event.id}
                         >
-
 
                             <div 
                                 className={`timeline-icon ${event.type}`}
@@ -106,10 +98,7 @@ function Timeline(){
 
                             </div>
 
-
-
                             <div className="timeline-content">
-
 
                                 <div className="timeline-date">
 
@@ -117,13 +106,11 @@ function Timeline(){
 
                                 </div>
 
-
                                 <h3>
 
                                     {event.title}
 
                                 </h3>
-
 
                                 <p>
 
@@ -131,19 +118,14 @@ function Timeline(){
 
                                 </p>
 
-
                             </div>
 
-
                         </div>
-
 
                     ))
                 }
 
-
             </div>
-
 
         </section>
 

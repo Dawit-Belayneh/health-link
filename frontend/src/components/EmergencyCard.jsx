@@ -10,7 +10,18 @@ import {
     BadgeCheck
 } from "lucide-react";
 
-function EmergencyCard() {
+function EmergencyCard({ patient, records = [] }) {
+
+    const contactName = patient?.emergency_contact_name || "John Doe";
+    const relationship = patient?.emergency_contact_relationship || "Emergency Contact";
+    const phone = patient?.emergency_contact_phone || "+251 911 123 456";
+    const bloodType = patient?.blood_type || "O+";
+    const allergies = patient?.allergies || "None reported";
+
+    const rxRecord = records.find(r => r.prescription && r.prescription.trim());
+    const currentMed = rxRecord ? rxRecord.prescription.split("-")[0].trim() : "None";
+
+    const initials = contactName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || "EC";
 
     return (
 
@@ -34,15 +45,15 @@ function EmergencyCard() {
 
                 <div className="contact-avatar">
 
-                    JD
+                    {initials}
 
                 </div>
 
                 <div>
 
-                    <h3>John Doe</h3>
+                    <h3>{contactName}</h3>
 
-                    <p>Brother • Emergency Contact</p>
+                    <p>{relationship} • Emergency Contact</p>
 
                 </div>
 
@@ -58,7 +69,7 @@ function EmergencyCard() {
 
                         <h4>Phone</h4>
 
-                        <p>+251 911 123 456</p>
+                        <p>{phone}</p>
 
                     </div>
 
@@ -72,7 +83,7 @@ function EmergencyCard() {
 
                         <h4>Blood Type</h4>
 
-                        <p>O+</p>
+                        <p>{bloodType}</p>
 
                     </div>
 
@@ -86,7 +97,7 @@ function EmergencyCard() {
 
                         <h4>Allergies</h4>
 
-                        <p>Penicillin</p>
+                        <p>{allergies}</p>
 
                     </div>
 
@@ -100,7 +111,7 @@ function EmergencyCard() {
 
                         <h4>Current Medication</h4>
 
-                        <p>Vitamin D</p>
+                        <p>{currentMed}</p>
 
                     </div>
 
@@ -128,7 +139,7 @@ function EmergencyCard() {
 
                         <h4>Preferred Hospital</h4>
 
-                        <p>HealthLink Medical Center</p>
+                        <p>HealthLink Central Hospital</p>
 
                     </div>
 
@@ -136,7 +147,7 @@ function EmergencyCard() {
 
             </div>
 
-            <button className="emergency-btn">
+            <button className="emergency-btn" onClick={() => alert(`Calling emergency contact: ${contactName} at ${phone}`)}>
 
                 <PhoneCall size={18} />
 

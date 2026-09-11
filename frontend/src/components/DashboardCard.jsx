@@ -1,4 +1,5 @@
 import "./DashboardCard.css";
+import { useNavigate } from "react-router-dom";
 import {
     FileText,
     CalendarCheck2,
@@ -7,44 +8,52 @@ import {
     TrendingUp
 } from "lucide-react";
 
-function DashboardCards() {
+function DashboardCards({ records = [], patient }) {
+    const navigate = useNavigate();
+
+    const totalRecords = records.length;
+    const medicationsCount = records.filter(r => r.prescription && r.prescription.trim() !== "").length;
 
     const cards = [
         {
             id: 1,
             title: "Medical Records",
-            value: "18",
-            subtitle: "Total Records",
+            value: totalRecords.toString(),
+            subtitle: "Total History Records",
             icon: <FileText size={30} />,
             color: "blue",
-            change: "+2 This Month"
+            change: totalRecords > 0 ? `${totalRecords} Logged` : "No Records",
+            path: "/medical-records"
         },
         {
             id: 2,
             title: "Appointments",
-            value: "3",
-            subtitle: "Upcoming Visits",
+            value: "1",
+            subtitle: "Upcoming Visit",
             icon: <CalendarCheck2 size={30} />,
             color: "green",
-            change: "Next Tomorrow"
+            change: "Confirmed",
+            path: "/appointments"
         },
         {
             id: 3,
-            title: "Medications",
-            value: "5",
-            subtitle: "Active Medicines",
+            title: "Prescriptions",
+            value: medicationsCount.toString(),
+            subtitle: "Active Prescriptions",
             icon: <Pill size={30} />,
             color: "orange",
-            change: "2 Need Refill"
+            change: medicationsCount > 0 ? "Up to date" : "None active",
+            path: "/medications"
         },
         {
             id: 4,
             title: "Health Score",
-            value: "92%",
+            value: "94%",
             subtitle: "Excellent",
             icon: <HeartPulse size={30} />,
             color: "red",
-            change: "+4% Improved"
+            change: "+4% Improved",
+            path: "/health"
         }
     ];
 
@@ -57,6 +66,9 @@ function DashboardCards() {
                 <div
                     key={card.id}
                     className="card"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => navigate(card.path)}
+                    title={`Go to ${card.title}`}
                 >
 
                     <div className={`icon ${card.color}`}>

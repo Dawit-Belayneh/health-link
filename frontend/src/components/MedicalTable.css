@@ -219,15 +219,20 @@ tbody tr:hover{
 @media(max-width:768px){
 
 .medical-table{
-
-    padding:22px;
-
+    padding: 18px;
 }
 
 table{
+    min-width: 620px;
+}
 
-    min-width:900px;
+th, td{
+    padding: 12px 10px;
+    font-size: 13px;
+}
 
+.table-header h2{
+    font-size: 18px;
 }
 
 }

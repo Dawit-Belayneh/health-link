@@ -1,4 +1,5 @@
 import "./HealthOverview.css";
+import { useNavigate } from "react-router-dom";
 import {
     Phone,
     Mail,
@@ -11,28 +12,55 @@ import {
     TriangleAlert
 } from "lucide-react";
 
-function HealthOverview() {
+function HealthOverview({ patient }) {
+    const navigate = useNavigate();
+
+    const fullName = patient?.user_details?.full_name || patient?.user_details?.username || "Patient";
+    const patientId = patient?.id ? `HL-2026-${String(patient.id).padStart(5, "0")}` : "HL-2026-00001";
+    const bloodType = patient?.blood_type || "O+";
+    const gender = patient?.gender || "Male";
+    const height = patient?.height ? `${patient.height} cm` : "178 cm";
+    const weight = patient?.weight ? `${patient.weight} kg` : "72 kg";
+    const phone = patient?.phone_number || "+251 900 000 000";
+    const email = patient?.user_details?.email || "patient@healthlink.com";
+    const allergies = patient?.allergies || "None reported";
+
+    let age = "25 Years";
+    if (patient?.date_of_birth) {
+        const birth = new Date(patient.date_of_birth);
+        const diff = Date.now() - birth.getTime();
+        const ageDate = new Date(diff);
+        const calculatedAge = Math.abs(ageDate.getUTCFullYear() - 1970);
+        if (!isNaN(calculatedAge)) {
+            age = `${calculatedAge} Years`;
+        }
+    }
 
     return (
 
         <section className="health-overview">
 
-            <div className="profile-header">
+            <div
+                className="profile-header"
+                style={{ cursor: "pointer" }}
+                onClick={() => navigate("/profile")}
+                title="Edit / View Full Profile"
+            >
 
                 <img
-                    src="https://i.pravatar.cc/150?img=15"
-                    alt="Patient"
+                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=2563eb&color=fff`}
+                    alt={fullName}
                 />
 
                 <div>
 
-                    <h2>Dawit Belayneh</h2>
+                    <h2>{fullName}</h2>
 
-                    <p>Patient ID : HL-2026-00154</p>
+                    <p>Patient ID : {patientId}</p>
 
                     <span className="status">
                         <ShieldCheck size={16}/>
-                        Healthy
+                        Active
                     </span>
 
                 </div>
@@ -49,7 +77,7 @@ function HealthOverview() {
 
                         <h4>Blood Type</h4>
 
-                        <p>O+</p>
+                        <p>{bloodType}</p>
 
                     </div>
 
@@ -63,7 +91,7 @@ function HealthOverview() {
 
                         <h4>Age</h4>
 
-                        <p>23 Years</p>
+                        <p>{age}</p>
 
                     </div>
 
@@ -77,7 +105,7 @@ function HealthOverview() {
 
                         <h4>Gender</h4>
 
-                        <p>Male</p>
+                        <p>{gender}</p>
 
                     </div>
 
@@ -91,7 +119,7 @@ function HealthOverview() {
 
                         <h4>Height</h4>
 
-                        <p>178 cm</p>
+                        <p>{height}</p>
 
                     </div>
 
@@ -105,7 +133,7 @@ function HealthOverview() {
 
                         <h4>Weight</h4>
 
-                        <p>72 kg</p>
+                        <p>{weight}</p>
 
                     </div>
 
@@ -119,7 +147,7 @@ function HealthOverview() {
 
                         <h4>Phone</h4>
 
-                        <p>+251 900 000 000</p>
+                        <p>{phone}</p>
 
                     </div>
 
@@ -133,7 +161,7 @@ function HealthOverview() {
 
                         <h4>Email</h4>
 
-                        <p>dawit@gmail.com</p>
+                        <p>{email}</p>
 
                     </div>
 
@@ -147,7 +175,7 @@ function HealthOverview() {
 
                         <h4>Allergies</h4>
 
-                        <p>Penicillin</p>
+                        <p>{allergies}</p>
 
                     </div>
 

@@ -1,4 +1,5 @@
 import "./PrescriptionCard.css";
+import { useNavigate } from "react-router-dom";
 import {
     Pill,
     Clock3,
@@ -7,39 +8,43 @@ import {
     AlertCircle
 } from "lucide-react";
 
-function PrescriptionCard() {
+function PrescriptionCard({ records = [] }) {
+    const navigate = useNavigate();
 
-    const medicines = [
+    const rxRecords = records.filter(r => r.prescription && r.prescription.trim());
 
-        {
-            id: 1,
-            name: "Amoxicillin 500mg",
-            dosage: "1 Capsule • 3 Times Daily",
-            doctor: "Dr. Sarah Johnson",
-            start: "10 Jul 2026",
-            end: "20 Jul 2026",
-            progress: 70,
+    const medicines = rxRecords.map((r, i) => {
+        const parts = r.prescription.split("-");
+        const name = parts[0]?.trim() || r.prescription;
+        const dosage = parts[1]?.trim() || "As directed by physician";
+        const docName = r.doctor_name || r.doctor || "Dr. Sarah Johnson";
+        const dateStr = r.date || r.visit_date;
+        const startDate = dateStr 
+            ? new Date(dateStr).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" }) 
+            : "Active";
+
+        return {
+            id: r.id || i,
+            name,
+            dosage,
+            doctor: docName,
+            start: startDate,
+            end: "30 Days Plan",
+            progress: 65,
             refill: false
-        },
-
-        {
-            id: 2,
-            name: "Vitamin D",
-            dosage: "1 Tablet • Every Morning",
-            doctor: "Dr. Michael Lee",
-            start: "01 Jul 2026",
-            end: "30 Jul 2026",
-            progress: 45,
-            refill: true
-        }
-
-    ];
+        };
+    });
 
     return (
 
         <section className="prescription-card">
 
-            <div className="prescription-header">
+            <div
+                className="prescription-header"
+                style={{ cursor: "pointer" }}
+                onClick={() => navigate("/medications")}
+                title="Open Medications Management"
+            >
 
                 <h2>Active Prescriptions</h2>
 
@@ -48,8 +53,12 @@ function PrescriptionCard() {
             </div>
 
             {
-
-                medicines.map((medicine)=>(
+                medicines.length === 0 ? (
+                    <p style={{ color: "#64748b", padding: "20px 0", textAlign: "center" }}>
+                        No active prescriptions at this time.
+                    </p>
+                ) : (
+                    medicines.map((medicine)=>(
 
                     <div
                         className="medicine-card"
@@ -130,8 +139,7 @@ function PrescriptionCard() {
                     </div>
 
                 ))
-
-            }
+            )}
 
         </section>
 

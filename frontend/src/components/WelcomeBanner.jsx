@@ -6,7 +6,7 @@ import {
     ArrowRight
 } from "lucide-react";
 
-function WelcomeBanner() {
+function WelcomeBanner({ patient, records = [] }) {
 
     const hour = new Date().getHours();
 
@@ -14,6 +14,20 @@ function WelcomeBanner() {
 
     if (hour < 12) greeting = "Good Morning";
     else if (hour < 18) greeting = "Good Afternoon";
+
+    const fullName = patient?.user_details?.full_name || patient?.user_details?.username || "Patient";
+
+    const lastRecord = records.length > 0 ? records[0] : null;
+    const lastCheckupDate = lastRecord?.date 
+        ? new Date(lastRecord.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+        : "7 Days Ago";
+
+    const scrollToRecords = () => {
+        const table = document.querySelector(".medical-table");
+        if (table) {
+            table.scrollIntoView({ behavior: "smooth" });
+        }
+    };
 
     return (
 
@@ -28,7 +42,7 @@ function WelcomeBanner() {
                 <h1>
                     Welcome back,
                     <br />
-                    Dawit Belayneh
+                    {fullName}
                 </h1>
 
                 <p>
@@ -39,15 +53,15 @@ function WelcomeBanner() {
 
                 <div className="banner-buttons">
 
-                    <button className="primary-btn">
+                    <button className="primary-btn" onClick={scrollToRecords}>
 
-                        View Medical Records
+                        View Medical Records ({records.length})
 
                         <ArrowRight size={18} />
 
                     </button>
 
-                    <button className="secondary-btn">
+                    <button className="secondary-btn" onClick={() => alert("Appointment booking system is coming soon!")}>
 
                         Book Appointment
 
@@ -67,7 +81,7 @@ function WelcomeBanner() {
 
                     <h3>Health Score</h3>
 
-                    <h1>92%</h1>
+                    <h1>94%</h1>
 
                     <p>Excellent Condition</p>
 
@@ -81,7 +95,7 @@ function WelcomeBanner() {
 
                         <h4>Next Visit</h4>
 
-                        <p>Tomorrow • 10:30 AM</p>
+                        <p>Wednesday • 10:30 AM</p>
 
                     </div>
 
@@ -95,7 +109,7 @@ function WelcomeBanner() {
 
                         <h4>Last Checkup</h4>
 
-                        <p>7 Days Ago</p>
+                        <p>{lastCheckupDate}</p>
 
                     </div>
 
