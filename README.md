@@ -1,12 +1,15 @@
-# HealthLink 🩺
+# HealthLink 🩺 `v1.0.0`
 
-> **Next-Generation Electronic Health Records (EHR) & Hospital Management Platform** with granular Role-Based Access Control (RBAC), Patient Consent Verification, and Emergency Clinical Override Protocols.
+> **Version 1.0.0 (Current Release)** — **Next-Generation Electronic Health Records (EHR) & Hospital Management Platform** with granular Role-Based Access Control (RBAC), Patient Consent Verification, and Emergency Clinical Override Protocols.
 
+[![Release](https://img.shields.io/badge/Release-v1.0.0-007ACC?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Dawit-Belayneh/health-link)
+[![Status](https://img.shields.io/badge/Status-Stable%20v1.0-brightgreen?style=for-the-badge)](https://github.com/Dawit-Belayneh/health-link)
 [![Django](https://img.shields.io/badge/Django-5.0+-092E20?style=for-the-badge&logo=django&logoColor=white)](https://www.djangoproject.com/)
 [![Django REST Framework](https://img.shields.io/badge/DRF-3.14+-red?style=for-the-badge&logo=django&logoColor=white)](https://www.django-rest-framework.org/)
 [![React](https://img.shields.io/badge/React-18.0+-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5.0+-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![JWT Auth](https://img.shields.io/badge/Auth-JWT_SimpleJWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)](https://jwt.io/)
+
 
 ---
 
@@ -224,6 +227,53 @@ cd frontend
 npm run build
 ```
 Compiled with Vite in `< 1.0s` with **0 errors**.
+
+---
+
+## 🌟 Release Information: Version 1.0.0
+
+HealthLink **v1.0.0** is the foundational release establishing core Electronic Health Record (EHR) capabilities, strict compliance boundaries, and life-saving clinical workflows:
+
+- ✅ **3-Tier Role-Based Access Control (RBAC)**: Enforced data isolation for Patients, Doctors, and Hospital Admins.
+- ✅ **Patient Consent & Data Sovereignty**: Self-onboarding intake, vitals tracking, and real-time approval/revocation of doctor access requests.
+- ✅ **Doctor Caseload Management**: Segregated active patient caseload vs. external search directory.
+- ✅ **Emergency Access Protocol**: Rapid clinical file unlocking verified via patient emergency contact name & phone.
+- ✅ **Hospital Administrative Scope**: Hospital-level doctor roster management, credentialing, and read-only hospital record auditing.
+- ✅ **Clinical Record Immutability**: Legal protections preventing both patients and hospital admins from altering certified clinical records (`HTTP 403 Forbidden`).
+- ✅ **Stabilized Ergonomic UI**: React 18 SPA with React Portals for modal rendering, zero screen fluttering, and comfortable input-to-icon spacing.
+
+---
+
+## 🔮 Future Updates & Product Roadmap
+
+HealthLink is continuously evolving to meet the highest standards of digital healthcare delivery. The following milestones are planned for upcoming releases:
+
+### 🚀 Planned Releases
+
+#### 🔹 Version 1.1 — Real-Time Telemedicine & Secure Clinical Chat
+- **WebRTC Video Consultations**: End-to-end encrypted telehealth visits between patients and doctors directly inside the browser.
+- **In-Call Prescription Pad**: Doctors can draft, sign, and issue digital prescriptions during live video sessions.
+- **Direct Encrypted Messaging**: Real-time asynchronous communication between patients and their care team for follow-up questions.
+
+#### 🔹 Version 1.2 — Laboratory & Diagnostic Imaging (DICOM / PACS)
+- **Medical Imaging Viewer**: In-browser DICOM viewer for X-Rays, MRIs, CT scans, and ultrasounds.
+- **Automated Lab Integrations**: Direct digital ingestion of blood panels, biopsy reports, and urinalysis results with abnormal value flags.
+- **Downloadable Health Summaries**: One-click generation of password-protected PDF health dossiers for patients.
+
+#### 🔹 Version 1.3 — AI-Powered Clinical Decision Support (CDS)
+- **Drug-to-Drug Interaction Checking**: Real-time AI alerts notifying doctors of contraindications or allergy risks before prescriptions are submitted.
+- **Ambient Clinical Transcription**: Voice-to-text dictation converting doctor-patient conversations into structured clinical SOAP notes.
+- **Smart Patient Triage**: AI symptom questionnaire to recommend appropriate medical specialties and urgency levels.
+
+#### 🔹 Version 1.4 — Native Mobile Applications (iOS & Android)
+- **Cross-Platform Mobile Apps**: Native apps built with Flutter / React Native for on-the-go patient and doctor access.
+- **Instant Push Notifications**: Immediate alerts for emergency access activations, pending doctor consent requests, and medication reminders.
+- **Biometric Authentication**: Fast, secure FaceID / Fingerprint sign-in for clinicians responding to trauma emergencies.
+
+#### 🔹 Version 2.0 — Enterprise Multi-Hospital Federation & Interoperability
+- **HL7 / FHIR Integration**: Full compliance with Fast Healthcare Interoperability Resources (FHIR) standard APIs for nationwide EHR exchange.
+- **Cross-Hospital Referral Network**: Seamless electronic patient transfers and record handoffs between affiliated healthcare networks.
+- **Wearables & Continuous Vitals Sync**: Integration with Apple HealthKit, Google Health Connect, and continuous glucose / ECG devices with auto-alert thresholds.
 
 ---
 
