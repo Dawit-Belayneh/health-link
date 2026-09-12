@@ -6,7 +6,7 @@ import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import Footer from "../components/Footer";
 
-import { getPatientProfile, getMedicalRecords, updatePatientProfile } from "../services/patient";
+import { getPatientProfile, getMedicalRecords, getVitals, logVitals, updatePatientProfile } from "../services/patient";
 import {
     HeartPulse,
     Activity,
@@ -30,24 +30,19 @@ function HealthStatus() {
     const navigate = useNavigate();
     const [patient, setPatient] = useState(null);
     const [records, setRecords] = useState([]);
+    const [vitalsHistory, setVitalsHistory] = useState([]);
     const [loading, setLoading] = useState(true);
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
-    // Vitals State (defaults or from patient profile & localStorage)
-    const [vitals, setVitals] = useState(() => {
-        const saved = localStorage.getItem("patient_custom_vitals");
-        if (saved) {
-            try { return JSON.parse(saved); } catch (e) {}
-        }
-        return {
-            systolic: 120,
-            diastolic: 80,
-            heartRate: 72,
-            oxygen: 98,
-            temperature: 36.6,
-            glucose: 94,
-            recordedAt: "Today, 09:30 AM"
-        };
+    // Vitals State loaded from database
+    const [vitals, setVitals] = useState({
+        systolic: 120,
+        diastolic: 80,
+        heartRate: 72,
+        oxygen: 98,
+        temperature: 36.6,
+        glucose: 94,
+        recordedAt: "Today, 09:30 AM"
     });
 
     const [showLogModal, setShowLogModal] = useState(false);
@@ -75,15 +70,33 @@ function HealthStatus() {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const [patientData, recordsData] = await Promise.all([
+                const [patientData, recordsData, vitalsData] = await Promise.all([
                     getPatientProfile(),
-                    getMedicalRecords()
+                    getMedicalRecords(),
+                    getVitals()
                 ]);
                 setPatient(patientData);
                 const recordList = Array.isArray(recordsData)
                     ? recordsData
                     : (recordsData.results || []);
                 setRecords(recordList);
+
+                const vList = Array.isArray(vitalsData) ? vitalsData : (vitalsData.results || []);
+                setVitalsHistory(vList);
+                if (vList.length > 0) {
+                    const latest = vList[0];
+                    setVitals({
+                        systolic: latest.systolic,
+                        diastolic: latest.diastolic,
+                        heartRate: latest.heart_rate,
+                        oxygen: latest.oxygen_level,
+                        temperature: parseFloat(latest.temperature),
+                        glucose: latest.blood_glucose,
+                        recordedAt: latest.recorded_at 
+                            ? new Date(latest.recorded_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })
+                            : "Recent assessment"
+                    });
+                }
 
                 // Populate log form height and weight
                 setLogForm(prev => ({
@@ -106,35 +119,46 @@ function HealthStatus() {
 
     const handleSaveVitals = async (e) => {
         e.preventDefault();
-        const updatedVitals = {
-            systolic: Number(logForm.systolic),
-            diastolic: Number(logForm.diastolic),
-            heartRate: Number(logForm.heartRate),
-            oxygen: Number(logForm.oxygen),
-            temperature: Number(logForm.temperature),
-            glucose: Number(logForm.glucose),
-            recordedAt: "Just now"
-        };
+        try {
+            const payload = {
+                systolic: Number(logForm.systolic),
+                diastolic: Number(logForm.diastolic),
+                heart_rate: Number(logForm.heartRate),
+                oxygen_level: Number(logForm.oxygen),
+                temperature: Number(logForm.temperature),
+                blood_glucose: Number(logForm.glucose),
+                height: logForm.height ? parseFloat(logForm.height) : undefined,
+                weight: logForm.weight ? parseFloat(logForm.weight) : undefined,
+                notes: "Patient logged vitals from portal"
+            };
 
-        setVitals(updatedVitals);
-        localStorage.setItem("patient_custom_vitals", JSON.stringify(updatedVitals));
+            const saved = await logVitals(payload);
+            setVitalsHistory(prev => [saved, ...prev]);
+            setVitals({
+                systolic: saved.systolic,
+                diastolic: saved.diastolic,
+                heartRate: saved.heart_rate,
+                oxygen: saved.oxygen_level,
+                temperature: parseFloat(saved.temperature),
+                glucose: saved.blood_glucose,
+                recordedAt: "Just now"
+            });
 
-        // Sync height / weight with backend if entered
-        if (logForm.height || logForm.weight) {
-            try {
-                const patchData = {};
-                if (logForm.height) patchData.height = parseFloat(logForm.height);
-                if (logForm.weight) patchData.weight = parseFloat(logForm.weight);
-                const updatedPat = await updatePatientProfile(patchData);
-                setPatient(updatedPat);
-            } catch (err) {
-                console.error("Error updating patient metrics:", err);
+            if (logForm.height || logForm.weight) {
+                setPatient(prev => ({
+                    ...prev,
+                    height: logForm.height ? parseFloat(logForm.height) : prev?.height,
+                    weight: logForm.weight ? parseFloat(logForm.weight) : prev?.weight
+                }));
             }
-        }
 
-        setShowLogModal(false);
-        setToastMessage("Vitals successfully logged and updated in your health record!");
-        setTimeout(() => setToastMessage(""), 5000);
+            setShowLogModal(false);
+            setToastMessage("Vitals successfully saved to database and clinical profile updated!");
+            setTimeout(() => setToastMessage(""), 5000);
+        } catch (err) {
+            console.error("Failed to log vitals:", err);
+            alert("Failed to save vitals. Please check values.");
+        }
     };
 
     // Calculate BMI
@@ -393,33 +417,39 @@ function HealthStatus() {
 
                         <div className="trends-chart-mock">
                             <div className="chart-bars-wrap">
-                                {[
-                                    { date: "May 10", bp: "124/82", sys: 124, hr: 74 },
-                                    { date: "May 28", bp: "122/80", sys: 122, hr: 71 },
-                                    { date: "Jun 15", bp: "128/84", sys: 128, hr: 76 },
-                                    { date: "Jul 02", bp: "120/78", sys: 120, hr: 70 },
-                                    { date: "Jul 20", bp: `${vitals.systolic}/${vitals.diastolic}`, sys: vitals.systolic, hr: vitals.heartRate }
-                                ].map((point, idx) => (
-                                    <div key={idx} className="chart-column">
-                                        <div className="bar-group">
-                                            <div
-                                                className="bar-bp"
-                                                style={{ height: `${(point.sys / 160) * 140}px` }}
-                                                title={`BP: ${point.bp} mmHg`}
-                                            >
-                                                <span className="bar-tooltip">{point.bp}</span>
+                                {(vitalsHistory.length > 0 
+                                    ? [...vitalsHistory].reverse().slice(-5)
+                                    : [
+                                        { recorded_at: new Date().toISOString(), systolic: vitals.systolic, diastolic: vitals.diastolic, heart_rate: vitals.heartRate }
+                                    ]
+                                ).map((v, idx) => {
+                                    const d = v.recorded_at ? new Date(v.recorded_at) : new Date();
+                                    const dateStr = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+                                    const bpStr = `${v.systolic}/${v.diastolic}`;
+                                    const sysVal = v.systolic || 120;
+                                    const hrVal = v.heart_rate || 72;
+                                    return (
+                                        <div key={idx} className="chart-column">
+                                            <div className="bar-group">
+                                                <div
+                                                    className="bar-bp"
+                                                    style={{ height: `${(sysVal / 160) * 140}px` }}
+                                                    title={`BP: ${bpStr} mmHg`}
+                                                >
+                                                    <span className="bar-tooltip">{bpStr}</span>
+                                                </div>
+                                                <div
+                                                    className="bar-hr"
+                                                    style={{ height: `${(hrVal / 120) * 120}px` }}
+                                                    title={`Heart Rate: ${hrVal} bpm`}
+                                                >
+                                                    <span className="bar-tooltip">{hrVal} bpm</span>
+                                                </div>
                                             </div>
-                                            <div
-                                                className="bar-hr"
-                                                style={{ height: `${(point.hr / 120) * 120}px` }}
-                                                title={`Heart Rate: ${point.hr} bpm`}
-                                            >
-                                                <span className="bar-tooltip">{point.hr} bpm</span>
-                                            </div>
+                                            <span className="col-date">{dateStr}</span>
                                         </div>
-                                        <span className="col-date">{point.date}</span>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
 
                             <div className="chart-legend">
@@ -465,8 +495,12 @@ function HealthStatus() {
                             </div>
                             <div>
                                 <h4>Emergency Contact</h4>
-                                <p><strong>{patient?.emergency_contact_name || "Dawit Belayneh"}</strong></p>
-                                <span className="sub-hint">{patient?.emergency_contact_phone || "+251 911 000 000"}</span>
+                                <p><strong>{patient?.emergency_contact_name || "None designated"}</strong></p>
+                                <span className="sub-hint">
+                                    {patient?.emergency_contact_phone
+                                        ? `${patient.emergency_contact_relationship ? patient.emergency_contact_relationship + ' • ' : ''}${patient.emergency_contact_phone}`
+                                        : "No emergency contact phone"}
+                                </span>
                             </div>
                         </div>
                     </div>

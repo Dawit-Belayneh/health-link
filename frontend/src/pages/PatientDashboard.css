@@ -71,13 +71,13 @@ body{
 
 .dashboard-main>*{
 
-    margin-bottom:30px;
+    margin-bottom:24px;
 
 }
 
 /* ==========================
    Dashboard Grid
-========================== */
+========================= */
 
 .dashboard-grid{
 
@@ -85,11 +85,11 @@ body{
 
     grid-template-columns:minmax(0,2fr) minmax(320px,380px);
 
-    gap:25px;
+    gap:24px;
 
     align-items:start;
 
-    margin-top:25px;
+    margin-top:0;
 
 }
 
@@ -230,4 +230,19 @@ body{
 
 }
 
+}
+
+/* ===========================
+   DASHBOARD INTEGRATED FOOTER
+=========================== */
+
+.dashboard-main .footer{
+    border-radius:22px;
+    padding-top:36px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.dashboard-main .footer-bottom{
+    margin-top:28px;
+    padding:18px 24px;
 }

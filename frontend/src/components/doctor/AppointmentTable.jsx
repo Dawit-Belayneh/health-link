@@ -1,58 +1,38 @@
+import { useState, useEffect } from "react";
 import "./AppointmentTable.css";
-
 import {
     Search,
     Eye,
-    SquarePen,
     CalendarDays,
     Clock3
 } from "lucide-react";
+import { getDoctorAppointments } from "../../services/doctor";
 
 function AppointmentTable() {
+    const [appointments, setAppointments] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
 
-    const appointments = [
+    useEffect(() => {
+        const fetchAppointments = async () => {
+            try {
+                setLoading(true);
+                const data = await getDoctorAppointments();
+                setAppointments(Array.isArray(data) ? data : (data.results || []));
+            } catch (err) {
+                console.error("Failed to load doctor appointments:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchAppointments();
+    }, []);
 
-        {
-            id: 1,
-            patient: "Dawit Belayneh",
-            age: 23,
-            date: "26 Jul 2026",
-            time: "09:00 AM",
-            reason: "Routine Checkup",
-            status: "Waiting"
-        },
-
-        {
-            id: 2,
-            patient: "Hana Tesfaye",
-            age: 35,
-            date: "26 Jul 2026",
-            time: "10:30 AM",
-            reason: "Diabetes Follow-up",
-            status: "In Progress"
-        },
-
-        {
-            id: 3,
-            patient: "Samuel Bekele",
-            age: 44,
-            date: "26 Jul 2026",
-            time: "11:45 AM",
-            reason: "Blood Pressure Review",
-            status: "Completed"
-        },
-
-        {
-            id: 4,
-            patient: "Abel Girma",
-            age: 29,
-            date: "26 Jul 2026",
-            time: "02:00 PM",
-            reason: "Skin Allergy",
-            status: "Waiting"
-        }
-
-    ];
+    const filtered = appointments.filter((apt) => {
+        const pName = apt.patient_name || apt.patient?.user_details?.full_name || apt.patient?.user?.username || "";
+        const q = searchTerm.toLowerCase();
+        return pName.toLowerCase().includes(q) || (apt.appointment_type || "").toLowerCase().includes(q);
+    });
 
     return (
 
@@ -98,107 +78,66 @@ function AppointmentTable() {
                             <th>Reason</th>
 
                             <th>Status</th>
-
-                            <th>Action</th>
-
                         </tr>
-
                     </thead>
 
                     <tbody>
-
-                        {
-
-                            appointments.map((appointment)=>(
-
-                                <tr key={appointment.id}>
-
-                                    <td>
-
-                                        <div className="patient-info">
-
-                                            <div className="avatar">
-
-                                                {appointment.patient.charAt(0)}
-
+                        {loading ? (
+                            <tr>
+                                <td colSpan="5" style={{ textAlign: "center", padding: "30px", color: "#64748b" }}>
+                                    Loading appointment roster...
+                                </td>
+                            </tr>
+                        ) : filtered.length === 0 ? (
+                            <tr>
+                                <td colSpan="5" style={{ textAlign: "center", padding: "30px", color: "#64748b" }}>
+                                    {searchTerm ? "No appointments matching search." : "No scheduled appointments for today."}
+                                </td>
+                            </tr>
+                        ) : (
+                            filtered.map((apt) => {
+                                const patientName = apt.patient_name || apt.patient?.user_details?.full_name || "Patient";
+                                return (
+                                    <tr key={apt.id}>
+                                        <td>
+                                            <div className="patient-info">
+                                                <div className="avatar">
+                                                    {patientName.charAt(0)}
+                                                </div>
+                                                <div>
+                                                    <strong>{patientName}</strong>
+                                                    <small>{apt.room || "Room 102"}</small>
+                                                </div>
                                             </div>
+                                        </td>
 
-                                            <div>
-
-                                                <strong>{appointment.patient}</strong>
-
-                                                <small>{appointment.age} Years</small>
-
+                                        <td>
+                                            <div className="cell">
+                                                <CalendarDays size={16} />
+                                                {apt.date}
                                             </div>
+                                        </td>
 
-                                        </div>
+                                        <td>
+                                            <div className="cell">
+                                                <Clock3 size={16} />
+                                                {apt.time}
+                                            </div>
+                                        </td>
 
-                                    </td>
+                                        <td>
+                                            {apt.notes || apt.appointment_type || "Clinical Consultation"}
+                                        </td>
 
-                                    <td>
-
-                                        <div className="cell">
-
-                                            <CalendarDays size={16}/>
-
-                                            {appointment.date}
-
-                                        </div>
-
-                                    </td>
-
-                                    <td>
-
-                                        <div className="cell">
-
-                                            <Clock3 size={16}/>
-
-                                            {appointment.time}
-
-                                        </div>
-
-                                    </td>
-
-                                    <td>{appointment.reason}</td>
-
-                                    <td>
-
-                                        <span
-                                            className={`status ${appointment.status.toLowerCase().replace(" ","-")}`}
-                                        >
-
-                                            {appointment.status}
-
-                                        </span>
-
-                                    </td>
-
-                                    <td>
-
-                                        <div className="actions">
-
-                                            <button className="view-btn">
-
-                                                <Eye size={17}/>
-
-                                            </button>
-
-                                            <button className="edit-btn">
-
-                                                <SquarePen size={17}/>
-
-                                            </button>
-
-                                        </div>
-
-                                    </td>
-
-                                </tr>
-
-                            ))
-
-                        }
-
+                                        <td>
+                                            <span className={`status ${(apt.status || "confirmed").toLowerCase().replace(" ", "-")}`}>
+                                                {apt.status || "Confirmed"}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                );
+                            })
+                        )}
                     </tbody>
 
                 </table>

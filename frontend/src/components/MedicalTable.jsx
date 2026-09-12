@@ -23,6 +23,9 @@ function MedicalTable({ records = [] }) {
         return doc.includes(term) || dept.includes(term) || diag.includes(term);
     });
 
+    const DISPLAY_LIMIT = 4;
+    const visibleRecords = filteredRecords.slice(0, DISPLAY_LIMIT);
+
     const formatDate = (dateStr) => {
         if (!dateStr) return "N/A";
         const d = new Date(dateStr);
@@ -51,7 +54,7 @@ function MedicalTable({ records = [] }) {
                             gap: "2px"
                         }}
                     >
-                        <span>View All</span>
+                        <span>View All ({records.length})</span>
                         <ChevronRight size={14} />
                     </Link>
                 </div>
@@ -88,7 +91,7 @@ function MedicalTable({ records = [] }) {
                                 </td>
                             </tr>
                         ) : (
-                            filteredRecords.map((record) => {
+                            visibleRecords.map((record) => {
                                 const docName = record.doctor_name || record.doctor || "Dr. HealthLink";
                                 const dept = record.doctor_specialization || record.department || "General Practice";
                                 const formattedDate = formatDate(record.date || record.visit_date);
@@ -135,6 +138,18 @@ function MedicalTable({ records = [] }) {
                     </tbody>
                 </table>
             </div>
+
+            {filteredRecords.length > 0 && (
+                <div className="table-footer-bar">
+                    <span className="table-count-info">
+                        Showing {visibleRecords.length} of {filteredRecords.length} {filteredRecords.length === 1 ? 'record' : 'records'}
+                    </span>
+                    <Link to="/medical-records" className="show-more-link-btn">
+                        <span>Show More Records</span>
+                        <ChevronRight size={16} />
+                    </Link>
+                </div>
+            )}
 
             {selectedRecord && (
                 <div style={{

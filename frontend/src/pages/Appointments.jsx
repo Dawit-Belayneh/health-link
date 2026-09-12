@@ -6,7 +6,13 @@ import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import Footer from "../components/Footer";
 
-import { getPatientProfile, getMedicalRecords } from "../services/patient";
+import { 
+    getPatientProfile, 
+    getMedicalRecords, 
+    getAppointments, 
+    createAppointment, 
+    cancelAppointment 
+} from "../services/patient";
 import {
     CalendarDays,
     Clock,
@@ -27,35 +33,6 @@ import {
     ArrowRight
 } from "lucide-react";
 
-const INITIAL_APPOINTMENTS = [
-    {
-        id: "apt-101",
-        doctor_name: "Dr. Sarah Johnson",
-        specialization: "Cardiology Specialist",
-        hospital: "HealthLink Central Hospital",
-        room: "Room 302, 3rd Floor",
-        date: "2026-07-22",
-        time: "10:30 AM",
-        type: "In-Person",
-        status: "Confirmed",
-        notes: "Routine quarterly cardiovascular evaluation and ECG check.",
-        phone: "+251 115 517 000"
-    },
-    {
-        id: "apt-102",
-        doctor_name: "Dr. Michael Chen",
-        specialization: "General Medicine",
-        hospital: "HealthLink Downtown Clinic",
-        room: "Telehealth Room B",
-        date: "2026-08-05",
-        time: "02:15 PM",
-        type: "Telehealth",
-        status: "Confirmed",
-        notes: "Follow-up consultation on blood pressure management and vitals review.",
-        phone: "+251 115 518 111"
-    }
-];
-
 function Appointments() {
     const navigate = useNavigate();
     const [patient, setPatient] = useState(null);
@@ -64,18 +41,8 @@ function Appointments() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("upcoming"); // "upcoming", "past", "cancelled"
 
-    // Appointments state from localStorage or initial
-    const [appointments, setAppointments] = useState(() => {
-        const saved = localStorage.getItem("patient_appointments");
-        if (saved) {
-            try {
-                return JSON.parse(saved);
-            } catch (e) {
-                return INITIAL_APPOINTMENTS;
-            }
-        }
-        return INITIAL_APPOINTMENTS;
-    });
+    // Appointments state loaded from real PostgreSQL API
+    const [appointments, setAppointments] = useState([]);
 
     // Modal state
     const [showBookModal, setShowBookModal] = useState(false);
@@ -103,15 +70,18 @@ function Appointments() {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const [patientData, recordsData] = await Promise.all([
+                const [patientData, recordsData, aptsData] = await Promise.all([
                     getPatientProfile(),
-                    getMedicalRecords()
+                    getMedicalRecords(),
+                    getAppointments()
                 ]);
                 setPatient(patientData);
                 const recordList = Array.isArray(recordsData)
                     ? recordsData
                     : (recordsData.results || []);
                 setRecords(recordList);
+                const aptList = Array.isArray(aptsData) ? aptsData : (aptsData.results || []);
+                setAppointments(aptList);
             } catch (err) {
                 console.error("Failed to load appointments:", err);
                 if (err.response && err.response.status === 401) {
@@ -125,46 +95,53 @@ function Appointments() {
         fetchData();
     }, [navigate]);
 
-    const saveAppointments = (newApts) => {
-        setAppointments(newApts);
-        localStorage.setItem("patient_appointments", JSON.stringify(newApts));
-    };
-
-    const handleBookAppointment = (e) => {
+    const handleBookAppointment = async (e) => {
         e.preventDefault();
-        const newApt = {
-            id: `apt-${Date.now()}`,
-            doctor_name: formData.doctor_name,
-            specialization: formData.specialization,
-            hospital: formData.hospital,
-            room: formData.type === "In-Person" ? "Room 204 • Outpatient Ward" : "HealthLink Telehealth Portal",
-            date: formData.date,
-            time: formData.time,
-            type: formData.type,
-            status: "Confirmed",
-            notes: formData.notes || "General medical consultation and clinical assessment.",
-            phone: "+251 115 517 000"
-        };
+        try {
+            const payload = {
+                doctor_name: formData.doctor_name,
+                specialization: formData.specialization,
+                hospital_name: formData.hospital,
+                room: formData.type === "In-Person" ? "Room 204 • Outpatient Ward" : "HealthLink Telehealth Portal",
+                date: formData.date,
+                time: formData.time,
+                appointment_type: formData.type,
+                status: "Confirmed",
+                notes: formData.notes || "General medical consultation and clinical assessment."
+            };
 
-        const updated = [newApt, ...appointments];
-        saveAppointments(updated);
-        setShowBookModal(false);
-        setShowSuccessToast(`Appointment with ${formData.doctor_name} scheduled for ${formData.date} at ${formData.time}!`);
+            const created = await createAppointment(payload);
+            setAppointments(prev => [created, ...prev]);
+            setShowBookModal(false);
+            setShowSuccessToast(`Appointment with ${formData.doctor_name} scheduled for ${formData.date} at ${formData.time}!`);
 
-        setTimeout(() => {
-            setShowSuccessToast("");
-        }, 5000);
+            setTimeout(() => {
+                setShowSuccessToast("");
+            }, 5000);
+        } catch (err) {
+            console.error("Failed to book appointment:", err);
+            alert("Failed to schedule appointment. Please check all fields.");
+        }
     };
 
-    const handleCancelAppointment = (aptId) => {
+    const handleCancelAppointment = async (aptId) => {
         if (window.confirm("Are you sure you want to cancel this appointment?")) {
-            const updated = appointments.map(apt => {
-                if (apt.id === aptId) {
-                    return { ...apt, status: "Cancelled" };
-                }
-                return apt;
-            });
-            saveAppointments(updated);
+            try {
+                await cancelAppointment(aptId);
+                setAppointments(prev => prev.map(apt => {
+                    if (apt.id === aptId) {
+                        return { ...apt, status: "Cancelled" };
+                    }
+                    return apt;
+                }));
+                setShowSuccessToast("Appointment marked as cancelled.");
+                setTimeout(() => {
+                    setShowSuccessToast("");
+                }, 4000);
+            } catch (err) {
+                console.error("Failed to cancel appointment:", err);
+                alert("Failed to cancel appointment. Please try again.");
+            }
         }
     };
 
@@ -345,7 +322,7 @@ function Appointments() {
                                                     </div>
                                                     <p className="apt-spec">{apt.specialization}</p>
                                                     <p className="apt-hosp">
-                                                        <Building2 size={14} /> {apt.hospital}
+                                                        <Building2 size={14} /> {apt.hospital_name || apt.hospital || "HealthLink Central Hospital"}
                                                     </p>
                                                 </div>
                                             </div>
@@ -366,14 +343,14 @@ function Appointments() {
                                                     </div>
                                                 </div>
                                                 <div className="schedule-item">
-                                                    {apt.type === "Telehealth" ? (
+                                                    {(apt.appointment_type === "Telehealth" || apt.type === "Telehealth") ? (
                                                         <Video size={18} className="icon-purple" />
                                                     ) : (
                                                         <MapPin size={18} className="icon-blue" />
                                                     )}
                                                     <div>
                                                         <span className="sched-lbl">Type / Room</span>
-                                                        <strong>{apt.room}</strong>
+                                                        <strong>{apt.room || ((apt.appointment_type || apt.type) === "Telehealth" ? "HealthLink Telehealth Portal" : "Outpatient Ward")}</strong>
                                                     </div>
                                                 </div>
                                             </div>
@@ -730,11 +707,11 @@ function Appointments() {
                                     </div>
                                     <div className="detail-item">
                                         <span className="d-lbl">Facility / Hospital</span>
-                                        <strong>{selectedAptDetails.hospital}</strong>
+                                        <strong>{selectedAptDetails.hospital_name || selectedAptDetails.hospital || "HealthLink Central Hospital"}</strong>
                                     </div>
                                     <div className="detail-item">
                                         <span className="d-lbl">Location / Room</span>
-                                        <strong>{selectedAptDetails.room}</strong>
+                                        <strong>{selectedAptDetails.room || ((selectedAptDetails.appointment_type || selectedAptDetails.type) === "Telehealth" ? "HealthLink Telehealth Portal" : "Room 204 • Outpatient Ward")}</strong>
                                     </div>
                                 </div>
 

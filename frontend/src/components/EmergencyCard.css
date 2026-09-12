@@ -4,7 +4,7 @@
 
     border-radius:24px;
 
-    padding:30px;
+    padding:24px;
 
     box-shadow:0 10px 25px rgba(0,0,0,.08);
 
@@ -18,7 +18,7 @@
 
     align-items:center;
 
-    margin-bottom:25px;
+    margin-bottom:18px;
 
 }
 
@@ -40,11 +40,11 @@
 
     color:#15803d;
 
-    padding:8px 16px;
+    padding:6px 14px;
 
     border-radius:30px;
 
-    font-size:14px;
+    font-size:13px;
 
     font-weight:600;
 
@@ -56,23 +56,23 @@
 
     align-items:center;
 
-    gap:18px;
+    gap:14px;
 
-    padding:18px;
+    padding:14px;
 
-    border-radius:18px;
+    border-radius:16px;
 
     background:#eff6ff;
 
-    margin-bottom:25px;
+    margin-bottom:18px;
 
 }
 
 .contact-avatar{
 
-    width:65px;
+    width:50px;
 
-    height:65px;
+    height:50px;
 
     border-radius:50%;
 
@@ -86,9 +86,10 @@
 
     align-items:center;
 
-    font-size:22px;
+    font-size:18px;
 
     font-weight:700;
+    flex-shrink: 0;
 
 }
 
@@ -96,13 +97,15 @@
 
     color:#0f172a;
 
-    margin-bottom:4px;
+    margin-bottom:2px;
+    font-size: 16px;
 
 }
 
 .emergency-contact p{
 
     color:#64748b;
+    font-size: 13px;
 
 }
 
@@ -110,9 +113,11 @@
 
     display:grid;
 
-    gap:16px;
+    grid-template-columns:repeat(2, 1fr);
 
-    margin-bottom:28px;
+    gap:10px;
+
+    margin-bottom:20px;
 
 }
 
@@ -122,23 +127,29 @@
 
     align-items:center;
 
-    gap:15px;
+    gap:10px;
 
-    padding:16px;
+    padding:10px 12px;
 
-    border-radius:14px;
+    border-radius:12px;
 
     background:#f8fafc;
 
     transition:.3s;
+    min-width: 0;
 
+}
+
+.detail-item div{
+    min-width: 0;
+    overflow: hidden;
 }
 
 .detail-item:hover{
 
     background:#eff6ff;
 
-    transform:translateX(5px);
+    transform:translateX(3px);
 
 }
 
@@ -154,9 +165,9 @@
 
     color:#64748b;
 
-    font-size:14px;
+    font-size:11px;
 
-    margin-bottom:4px;
+    margin-bottom:2px;
 
 }
 
@@ -165,6 +176,10 @@
     color:#0f172a;
 
     font-weight:600;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
 }
 
@@ -180,7 +195,7 @@
 
     color:white;
 
-    padding:16px;
+    padding:13px;
 
     display:flex;
 
@@ -190,7 +205,7 @@
 
     gap:10px;
 
-    font-size:15px;
+    font-size:14px;
 
     font-weight:600;
 
@@ -256,4 +271,10 @@
 
 }
 
+}
+
+@media(max-width:480px){
+    .emergency-details{
+        grid-template-columns: 1fr;
+    }
 }

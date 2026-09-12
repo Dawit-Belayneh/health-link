@@ -16,57 +16,111 @@ import Notifications from "./pages/Notifications";
 import Settings from "./pages/Settings";
 // import AdminDashboard from "./pages/AdminDashboard";
 
+import ProtectedRoute from "./components/ProtectedRoute";
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-
         <Route path="/login" element={<Login />} />
-
         <Route path="/signup" element={<Signup />} />
 
+        {/* Patient Only Routes */}
         <Route
           path="/patient"
-          element={<PatientDashboard />}
+          element={
+            <ProtectedRoute allowedRoles={['patient']}>
+              <PatientDashboard />
+            </ProtectedRoute>
+          }
         />
-
         <Route
           path="/patient/dashboard"
-          element={<PatientDashboard />}
+          element={
+            <ProtectedRoute allowedRoles={['patient']}>
+              <PatientDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route 
+          path="/medical-records" 
+          element={
+            <ProtectedRoute allowedRoles={['patient']}>
+              <MedicalRecords />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/appointments" 
+          element={
+            <ProtectedRoute allowedRoles={['patient']}>
+              <Appointments />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/medications" 
+          element={
+            <ProtectedRoute allowedRoles={['patient']}>
+              <Medications />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/health" 
+          element={
+            <ProtectedRoute allowedRoles={['patient']}>
+              <HealthStatus />
+            </ProtectedRoute>
+          } 
         />
 
+        {/* Doctor Only Routes */}
         <Route
           path="/doctor/dashboard"
-          element={<DoctorDashboard />}
+          element={
+            <ProtectedRoute allowedRoles={['doctor', 'hospital_staff']}>
+              <DoctorDashboard />
+            </ProtectedRoute>
+          }
         />
 
+        {/* Hospital Admin Only Routes */}
         <Route
           path="/hospital/dashboard"
-          element={<HospitalDashboard />}
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <HospitalDashboard />
+            </ProtectedRoute>
+          }
         />
-          
-        {/* <Route
-          path="/admin/dashboard"
-          element={<AdminDashboard />}
-        /> */}
 
-        <Route path="/profile" element={<Profile />} />
-
-        <Route path="/medical-records" element={<MedicalRecords />} />
-
-        <Route path="/appointments" element={<Appointments />} />
-
-        <Route path="/medications" element={<Medications />} />
-
-        <Route path="/health" element={<HealthStatus />} />
-
-        <Route path="/notifications" element={<Notifications />} />
-
-        <Route path="/settings" element={<Settings />} />
-
-        {/* <Route path="*" element={<NotFound />} />  */}
-
+        {/* Authenticated Routes (Role-Aware) */}
+        <Route 
+          path="/profile" 
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/notifications" 
+          element={
+            <ProtectedRoute>
+              <Notifications />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/settings" 
+          element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          } 
+        />
       </Routes>
     </BrowserRouter>
   );

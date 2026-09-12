@@ -28,7 +28,7 @@
 
 }
 
-.prescription-header span{
+.prescription-badge{
 
     background:#eff6ff;
 
@@ -39,6 +39,8 @@
     border-radius:30px;
 
     font-weight:600;
+
+    font-size:13px;
 
 }
 
@@ -112,11 +114,11 @@
 
     display:grid;
 
-    grid-template-columns:1fr;
+    grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
 
-    gap:10px;
+    gap:12px;
 
-    margin:20px 0;
+    margin:18px 0;
 
 }
 
@@ -180,6 +182,45 @@
 
     font-weight:600;
 
+}
+
+.prescription-footer-bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:16px;
+    padding-top:14px;
+    border-top:1px solid #eef2f7;
+    flex-wrap:wrap;
+    gap:12px;
+}
+
+.prescription-count-info{
+    font-size:13px;
+    color:#64748b;
+    font-weight:500;
+}
+
+.prescription-more-link-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:9px 18px;
+    background:#eff6ff;
+    color:#2563eb;
+    border-radius:10px;
+    font-size:13px;
+    font-weight:600;
+    text-decoration:none;
+    transition:.25s ease;
+    border:1px solid #dbeafe;
+}
+
+.prescription-more-link-btn:hover{
+    background:#2563eb;
+    color:#ffffff;
+    border-color:#2563eb;
+    transform:translateX(3px);
 }
 
 @media(max-width:768px){

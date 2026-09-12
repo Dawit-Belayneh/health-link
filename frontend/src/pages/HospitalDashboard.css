@@ -131,17 +131,26 @@ body{
 
     box-shadow:0 10px 25px rgba(0,0,0,.08);
 
-    transition:.3s;
+    transition: box-shadow .3s;
 
 }
 
 .left-column>*:hover,
 .right-column>*:hover{
 
-    transform:translateY(-4px);
-
     box-shadow:0 18px 35px rgba(37,99,235,.12);
 
+}
+
+/* Prevent screen fluttering: Large management tables must never transform on hover */
+.doctor-management,
+.patient-management{
+    transform: none !important;
+}
+
+.doctor-management:hover,
+.patient-management:hover{
+    transform: none !important;
 }
 
 /* ==========================

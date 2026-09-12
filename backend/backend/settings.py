@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'doctors',
     'medical_records',
     'patients',
+    'access_requests',
     'rest_framework',
     'api',
     'django_filters',

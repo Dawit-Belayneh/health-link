@@ -1,4 +1,5 @@
 import "./CTA.css";
+import { Link } from "react-router-dom";
 
 function CTA() {
     return (
@@ -23,13 +24,13 @@ function CTA() {
 
                 <div className="cta-buttons">
 
-                    <button className="primary-btn">
-                        Create Account
-                    </button>
+                    <Link to="/signup" className="primary-btn" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                        Create Patient Account
+                    </Link>
 
-                    <button className="secondary-btn">
-                        Contact Us
-                    </button>
+                    <Link to="/login" className="secondary-btn" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                        Portal Login
+                    </Link>
 
                 </div>
 

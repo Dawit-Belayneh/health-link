@@ -151,6 +151,22 @@ function MedicalRecords() {
                                 <h2>Medical Records & History</h2>
                             </div>
                             <p>Complete clinical records, diagnostic summaries, and physician reports.</p>
+                            <div style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "6px",
+                                marginTop: "8px",
+                                padding: "4px 10px",
+                                background: "#f0fdf4",
+                                border: "1px solid #bbf7d0",
+                                borderRadius: "20px",
+                                color: "#166534",
+                                fontSize: "0.78rem",
+                                fontWeight: "600"
+                            }}>
+                                <CheckCircle2 size={13} />
+                                <span>Certified Clinical Records (Permanently archived & protected from modification)</span>
+                            </div>
                         </div>
 
                         <div className="header-actions">
@@ -481,6 +497,19 @@ function MedicalRecords() {
                                         </div>
                                     </div>
                                 )}
+
+                                <div style={{
+                                    marginTop: "16px",
+                                    padding: "10px 14px",
+                                    background: "#f8fafc",
+                                    border: "1px solid #e2e8f0",
+                                    borderRadius: "8px",
+                                    fontSize: "0.78rem",
+                                    color: "#64748b",
+                                    lineHeight: "1.4"
+                                }}>
+                                    🔒 <strong>Official Clinical Record:</strong> Certified by {selectedRecord.doctor_name || "attending physician"}. In accordance with healthcare standards, clinical medical records cannot be deleted or modified by patients or administrative staff.
+                                </div>
                             </div>
 
                             <div className="modal-footer">

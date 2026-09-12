@@ -15,12 +15,11 @@ import EmergencyCard from "../components/EmergencyCard";
 import Timeline from "../components/Timeline";
 import Footer from "../components/Footer";
 
-import { getPatientProfile, getMedicalRecords } from "../services/patient";
+import { getDashboardSummary } from "../services/patient";
 
 function PatientDashboard() {
     const navigate = useNavigate();
-    const [patient, setPatient] = useState(null);
-    const [records, setRecords] = useState([]);
+    const [summary, setSummary] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -32,33 +31,41 @@ function PatientDashboard() {
             return;
         }
 
-        const fetchData = async () => {
+        const userStr = localStorage.getItem("user");
+        let user = null;
+        try {
+            user = userStr ? JSON.parse(userStr) : null;
+        } catch {
+            user = null;
+        }
+        if (user && (user.role === "doctor" || user.role === "hospital_staff")) {
+            navigate("/doctor/dashboard");
+            return;
+        }
+        if (user && (user.role === "admin" || user.is_admin)) {
+            navigate("/hospital/dashboard");
+            return;
+        }
+
+        const fetchSummary = async () => {
             try {
                 setLoading(true);
                 setError("");
-                const [patientData, recordsData] = await Promise.all([
-                    getPatientProfile(),
-                    getMedicalRecords()
-                ]);
-
-                setPatient(patientData);
-                const recordList = Array.isArray(recordsData)
-                    ? recordsData
-                    : (recordsData.results || []);
-                setRecords(recordList);
+                const data = await getDashboardSummary();
+                setSummary(data);
             } catch (err) {
-                console.error("Failed to load patient dashboard data:", err);
+                console.error("Failed to load patient dashboard summary:", err);
                 if (err.response && err.response.status === 401) {
                     navigate("/login");
                 } else {
-                    setError("Could not load medical data. Please ensure backend server is running.");
+                    setError("Could not load real-time medical data. Please ensure backend server is running.");
                 }
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchData();
+        fetchSummary();
     }, [navigate]);
 
     if (loading) {
@@ -75,12 +82,20 @@ function PatientDashboard() {
                         margin: "0 auto 16px"
                     }} />
                     <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
-                    <h3 style={{ color: "#334155", margin: 0 }}>Loading your medical profile...</h3>
-                    <p style={{ color: "#64748b", marginTop: "6px" }}>Connecting to HealthLink secure database</p>
+                    <h3 style={{ color: "#334155", margin: 0 }}>Loading your live medical dashboard...</h3>
+                    <p style={{ color: "#64748b", marginTop: "6px" }}>Connecting to HealthLink real clinical database</p>
                 </div>
             </div>
         );
     }
+
+    const patient = summary?.patient || null;
+    const records = summary?.recent_records || [];
+    const upcomingApt = summary?.upcoming_appointment || null;
+    const appointments = summary?.appointments || [];
+    const latestVitals = summary?.latest_vitals || null;
+    const prescriptions = summary?.prescriptions || [];
+    const unreadCount = summary?.unread_notifications_count || 0;
 
     return (
         <div className="patient-dashboard">
@@ -105,22 +120,53 @@ function PatientDashboard() {
                     </div>
                 )}
 
-                <WelcomeBanner patient={patient} records={records} />
+                <WelcomeBanner
+                    patient={patient}
+                    records={records}
+                    upcomingApt={upcomingApt}
+                    latestVitals={latestVitals}
+                />
 
-                <DashboardCards patient={patient} records={records} />
+                <DashboardCards
+                    patient={patient}
+                    records={records}
+                    appointments={appointments}
+                    prescriptions={prescriptions}
+                    latestVitals={latestVitals}
+                />
 
                 <div className="dashboard-grid">
                     <div className="left-column">
-                        <HealthOverview patient={patient} />
+                        <HealthOverview
+                            patient={patient}
+                            latestVitals={latestVitals}
+                        />
                         <MedicalTable records={records} />
-                        <Timeline records={records} />
+                        <PrescriptionCard
+                            prescriptions={prescriptions}
+                            records={records}
+                        />
+                        <Timeline
+                            records={records}
+                            appointments={appointments}
+                            prescriptions={prescriptions}
+                        />
                     </div>
 
                     <div className="right-column">
-                        <AppointmentCard records={records} />
-                        <PrescriptionCard records={records} />
-                        <NotificationPanel patient={patient} />
-                        <EmergencyCard patient={patient} records={records} />
+                        <AppointmentCard
+                            appointment={upcomingApt}
+                            records={records}
+                        />
+                        <NotificationPanel
+                            patient={patient}
+                            unreadCount={unreadCount}
+                        />
+                        <EmergencyCard
+                            patient={patient}
+                            prescriptions={prescriptions}
+                            records={records}
+                        />
                     </div>
                 </div>
 

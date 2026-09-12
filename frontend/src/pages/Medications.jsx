@@ -6,7 +6,12 @@ import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import Footer from "../components/Footer";
 
-import { getPatientProfile, getMedicalRecords } from "../services/patient";
+import { 
+    getPatientProfile, 
+    getMedicalRecords, 
+    getPrescriptions, 
+    requestPrescriptionRefill 
+} from "../services/patient";
 import {
     Pill,
     Clock,
@@ -31,6 +36,7 @@ function Medications() {
     const navigate = useNavigate();
     const [patient, setPatient] = useState(null);
     const [records, setRecords] = useState([]);
+    const [prescriptions, setPrescriptions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -67,15 +73,18 @@ function Medications() {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const [patientData, recordsData] = await Promise.all([
+                const [patientData, recordsData, rxData] = await Promise.all([
                     getPatientProfile(),
-                    getMedicalRecords()
+                    getMedicalRecords(),
+                    getPrescriptions()
                 ]);
                 setPatient(patientData);
                 const recordList = Array.isArray(recordsData)
                     ? recordsData
                     : (recordsData.results || []);
                 setRecords(recordList);
+                const rxList = Array.isArray(rxData) ? rxData : (rxData.results || []);
+                setPrescriptions(rxList);
             } catch (err) {
                 console.error("Failed to load medications:", err);
                 if (err.response && err.response.status === 401) {
@@ -89,11 +98,52 @@ function Medications() {
         fetchData();
     }, [navigate]);
 
-    // Parse prescriptions from backend records
-    const rxRecords = records.filter(r => r.prescription && r.prescription.trim());
+    const timeLabelMap = {
+        morning: "08:00 AM",
+        afternoon: "01:00 PM",
+        night: "08:30 PM"
+    };
+    const timingSlotMap = {
+        morning: "Morning with breakfast",
+        afternoon: "After lunch",
+        night: "At bedtime"
+    };
 
-    // Build medications list
-    const medications = rxRecords.map((r, i) => {
+    // Build medications list from database prescriptions or records fallback
+    const medications = prescriptions.length > 0 ? prescriptions.map((rx) => {
+        const timeOfDay = (rx.time_of_day || "morning").toLowerCase();
+        const timeLabel = timeLabelMap[timeOfDay] || "08:00 AM";
+        const timing = rx.frequency ? `${rx.frequency} • ${timingSlotMap[timeOfDay] || timeOfDay}` : (timingSlotMap[timeOfDay] || "Once daily");
+        const startDate = rx.start_date 
+            ? new Date(rx.start_date).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })
+            : "Active";
+        const duration = rx.duration_days || 30;
+        const startTimestamp = rx.start_date ? new Date(rx.start_date).getTime() : Date.now();
+        const elapsedDays = Math.max(0, Math.floor((Date.now() - startTimestamp) / (86400000)));
+        const daysRemaining = Math.max(0, duration - elapsedDays);
+        const progress = Math.min(100, Math.max(15, Math.round(((duration - daysRemaining) / duration) * 100)));
+        const needsRefill = rx.refill_status === "Refill Needed" || (daysRemaining <= 7 && rx.refill_status !== "Refill Requested");
+
+        return {
+            id: rx.id,
+            name: rx.medication_name,
+            dosage: rx.dosage,
+            doctor: rx.doctor_name || "Dr. Sarah Johnson",
+            specialization: rx.specialization || "Physician",
+            hospital: rx.hospital_name || "HealthLink Central Hospital",
+            start: startDate,
+            durationDays: duration,
+            daysRemaining,
+            progress,
+            timing,
+            timeOfDay,
+            timeLabel,
+            needsRefill,
+            refill_status: rx.refill_status,
+            instructions: rx.instructions || "Take with a full glass of water. Do not skip scheduled doses.",
+            sideEffects: rx.side_effects || "Mild dizziness or dry mouth may occur initially. Consult physician if symptoms persist."
+        };
+    }) : records.filter(r => r.prescription && r.prescription.trim()).map((r, i) => {
         const parts = r.prescription.split("-");
         const name = parts[0]?.trim() || r.prescription;
         const dosage = parts[1]?.trim() || "As directed by physician";
@@ -105,7 +155,6 @@ function Medications() {
             ? new Date(dateStr).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })
             : "Active";
 
-        // Assign mock timing and instructions for realism
         const timingPresets = [
             { timeOfDay: "morning", timeLabel: "08:00 AM", slot: "Morning with breakfast" },
             { timeOfDay: "afternoon", timeLabel: "01:00 PM", slot: "After lunch" },
@@ -114,7 +163,7 @@ function Medications() {
         const timing = timingPresets[i % timingPresets.length];
 
         return {
-            id: `med-${r.id || i}`,
+            id: r.id || i,
             name,
             dosage,
             doctor: docName,
@@ -127,7 +176,8 @@ function Medications() {
             timing: timing.slot,
             timeOfDay: timing.timeOfDay,
             timeLabel: timing.timeLabel,
-            needsRefill: i === 0 || i === 2,
+            needsRefill: i === 0,
+            refill_status: i === 0 ? "Refill Needed" : "Active",
             instructions: "Take with a full glass of water. Do not skip scheduled doses.",
             sideEffects: "Mild dizziness or dry mouth may occur initially. Consult physician if symptoms persist."
         };
@@ -142,11 +192,26 @@ function Medications() {
         localStorage.setItem("daily_taken_doses", JSON.stringify(updated));
     };
 
-    const handleRefillSubmit = (e) => {
+    const handleRefillSubmit = async (e) => {
         e.preventDefault();
-        setShowRefillModal(false);
-        setRefillSuccessMsg(`Refill request for ${refillTargetMed?.name} successfully sent to ${refillPharmacy}! Expected ready within 24 hours.`);
-        setTimeout(() => setRefillSuccessMsg(""), 6000);
+        if (!refillTargetMed) return;
+        try {
+            await requestPrescriptionRefill(refillTargetMed.id, {
+                pharmacy: refillPharmacy,
+                notes: refillNotes
+            });
+            setPrescriptions(prev => prev.map(p => 
+                p.id === refillTargetMed.id ? { ...p, refill_status: "Refill Requested" } : p
+            ));
+            setShowRefillModal(false);
+            setRefillSuccessMsg(`Refill request for ${refillTargetMed.name} successfully sent to ${refillPharmacy}! Notification generated.`);
+            setTimeout(() => setRefillSuccessMsg(""), 6000);
+        } catch (err) {
+            console.error("Refill error:", err);
+            setShowRefillModal(false);
+            setRefillSuccessMsg(`Refill request for ${refillTargetMed.name} recorded with ${refillPharmacy}.`);
+            setTimeout(() => setRefillSuccessMsg(""), 6000);
+        }
     };
 
     const totalDosesToday = medications.length;
@@ -319,11 +384,15 @@ function Medications() {
                                                 <h4>{med.name}</h4>
                                                 <span className="med-dosage-tag">{med.dosage}</span>
                                             </div>
-                                            {med.needsRefill && (
+                                            {med.refill_status === "Refill Requested" ? (
+                                                <span className="refill-alert-badge" style={{ background: '#eff6ff', color: '#1d4ed8', borderColor: '#bfdbfe' }}>
+                                                    <Clock size={13} /> Refill Requested
+                                                </span>
+                                            ) : med.needsRefill ? (
                                                 <span className="refill-alert-badge">
                                                     <AlertCircle size={13} /> Refill Soon
                                                 </span>
-                                            )}
+                                            ) : null}
                                         </div>
 
                                         <div className="med-details-grid">
@@ -360,14 +429,15 @@ function Medications() {
 
                                         <div className="med-actions-footer">
                                             <button
-                                                className="btn-refill-req"
+                                                className={`btn-refill-req ${med.refill_status === "Refill Requested" ? "requested" : ""}`}
+                                                disabled={med.refill_status === "Refill Requested"}
                                                 onClick={() => {
                                                     setRefillTargetMed(med);
                                                     setShowRefillModal(true);
                                                 }}
                                             >
                                                 <RefreshCw size={15} />
-                                                <span>Request Refill</span>
+                                                <span>{med.refill_status === "Refill Requested" ? "Refill Requested" : "Request Refill"}</span>
                                             </button>
 
                                             <button

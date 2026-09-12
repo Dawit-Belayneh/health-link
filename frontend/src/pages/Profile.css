@@ -275,23 +275,23 @@
     color: #2563eb;
 }
 
-.form-row {
+.profile-page-container .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
 }
 
-.form-row.three-col {
+.profile-page-container .form-row.three-col {
     grid-template-columns: 1fr 1fr 1fr;
 }
 
-.form-group {
+.profile-page-container .form-group {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-.form-group label {
+.profile-page-container .form-group label {
     font-size: 13px;
     font-weight: 600;
     color: #475569;
@@ -299,9 +299,9 @@
     letter-spacing: 0.5px;
 }
 
-.form-group input,
-.form-group select,
-.form-group textarea {
+.profile-page-container .form-group input,
+.profile-page-container .form-group select,
+.profile-page-container .form-group textarea {
     width: 100%;
     padding: 13px 16px;
     border-radius: 12px;
@@ -315,17 +315,17 @@
     box-sizing: border-box;
 }
 
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
+.profile-page-container .form-group input:focus,
+.profile-page-container .form-group select:focus,
+.profile-page-container .form-group textarea:focus {
     border-color: #2563eb;
     background: white;
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
-.form-group input:disabled,
-.form-group select:disabled,
-.form-group textarea:disabled {
+.profile-page-container .form-group input:disabled,
+.profile-page-container .form-group select:disabled,
+.profile-page-container .form-group textarea:disabled {
     background: #f1f5f9;
     color: #334155;
     border-color: #e2e8f0;

@@ -6,7 +6,16 @@ import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import Footer from "../components/Footer";
 
-import { getPatientProfile, getMedicalRecords } from "../services/patient";
+import { 
+    getPatientProfile, 
+    getNotifications, 
+    toggleNotificationRead, 
+    markAllNotificationsRead, 
+    deleteNotification, 
+    clearAllNotifications,
+    getAccessRequests,
+    respondToAccessRequest
+} from "../services/patient";
 import {
     Bell,
     CalendarDays,
@@ -21,70 +30,40 @@ import {
     AlertCircle,
     X,
     Filter,
-    FileText
+    FileText,
+    ShieldCheck,
+    UserCheck,
+    UserX,
+    Stethoscope
 } from "lucide-react";
-
-const DEFAULT_NOTIFICATIONS = [
-    {
-        id: "notif-1",
-        type: "appointment",
-        title: "Upcoming Appointment Tomorrow",
-        message: "You have a consultation with Dr. Sarah Johnson scheduled for tomorrow at 10:30 AM at HealthLink Central.",
-        time: "15 min ago",
-        date: "Today",
-        unread: true,
-        link: "/appointments"
-    },
-    {
-        id: "notif-2",
-        type: "prescription",
-        title: "Medication Refill Reminder",
-        message: "Your prescription for Atorvastatin 20mg is down to 5 days remaining. Request a refill to prevent treatment gaps.",
-        time: "2 hours ago",
-        date: "Today",
-        unread: true,
-        link: "/medications"
-    },
-    {
-        id: "notif-3",
-        type: "record",
-        title: "Clinical Record Updated",
-        message: "Your doctor has uploaded the clinical summary and prescription notes from your recent consultation.",
-        time: "Yesterday, 04:20 PM",
-        date: "Yesterday",
-        unread: false,
-        link: "/medical-records"
-    },
-    {
-        id: "notif-4",
-        type: "system",
-        title: "HealthLink Clinic Notice",
-        message: "The outpatient cardiology wing will open at 08:00 AM on weekdays. Telehealth consultation lines remain 24/7.",
-        time: "3 days ago",
-        date: "Earlier this week",
-        unread: false,
-        link: null
-    }
-];
 
 function Notifications() {
     const navigate = useNavigate();
     const [patient, setPatient] = useState(null);
-    const [records, setRecords] = useState([]);
     const [loading, setLoading] = useState(true);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [filterCategory, setFilterCategory] = useState("all");
 
-    // Notifications state with localStorage persistence
-    const [notifications, setNotifications] = useState(() => {
-        const saved = localStorage.getItem("patient_notifications");
-        if (saved) {
-            try { return JSON.parse(saved); } catch (e) {}
-        }
-        return DEFAULT_NOTIFICATIONS;
-    });
-
+    // Notifications state from real database API
+    const [notifications, setNotifications] = useState([]);
+    const [accessRequests, setAccessRequests] = useState([]);
     const [toastMessage, setToastMessage] = useState("");
+
+    const formatTimeAgo = (dateStr) => {
+        if (!dateStr) return "Just now";
+        const date = new Date(dateStr);
+        const now = new Date();
+        const diffSec = Math.floor((now - date) / 1000);
+        if (diffSec < 60) return "Just now";
+        const diffMin = Math.floor(diffSec / 60);
+        if (diffMin < 60) return `${diffMin} min ago`;
+        const diffHours = Math.floor(diffMin / 60);
+        if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+        const diffDays = Math.floor(diffHours / 24);
+        if (diffDays === 1) return "Yesterday";
+        if (diffDays < 7) return `${diffDays} days ago`;
+        return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    };
 
     useEffect(() => {
         const token = localStorage.getItem("access");
@@ -96,15 +75,17 @@ function Notifications() {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const [patientData, recordsData] = await Promise.all([
+                const [patientData, notifsData, reqsData] = await Promise.all([
                     getPatientProfile(),
-                    getMedicalRecords()
+                    getNotifications(),
+                    getAccessRequests()
                 ]);
                 setPatient(patientData);
-                const recordList = Array.isArray(recordsData)
-                    ? recordsData
-                    : (recordsData.results || []);
-                setRecords(recordList);
+                const notifList = Array.isArray(notifsData)
+                    ? notifsData
+                    : (notifsData.results || []);
+                setNotifications(notifList);
+                setAccessRequests(Array.isArray(reqsData) ? reqsData : (reqsData.results || []));
             } catch (err) {
                 console.error("Failed to load notifications:", err);
                 if (err.response && err.response.status === 401) {
@@ -118,47 +99,82 @@ function Notifications() {
         fetchData();
     }, [navigate]);
 
-    const saveNotifs = (list) => {
-        setNotifications(list);
-        localStorage.setItem("patient_notifications", JSON.stringify(list));
-    };
-
-    const handleMarkAllRead = () => {
-        const updated = notifications.map(n => ({ ...n, unread: false }));
-        saveNotifs(updated);
-        setToastMessage("All notifications marked as read.");
-        setTimeout(() => setToastMessage(""), 4000);
-    };
-
-    const handleClearAll = () => {
-        if (window.confirm("Are you sure you want to dismiss all notifications?")) {
-            saveNotifs([]);
-            setToastMessage("All notifications cleared.");
-            setTimeout(() => setToastMessage(""), 4000);
+    const handleAccessAction = async (requestId, action) => {
+        try {
+            const updated = await respondToAccessRequest(requestId, action);
+            setAccessRequests(prev => prev.map(r => r.id === requestId ? updated : r));
+            if (action === "approve") {
+                setToastMessage(`Permission granted! Dr. ${updated.doctor_details?.name || "Doctor"} can now review your health records.`);
+            } else if (action === "reject") {
+                setToastMessage("Access request declined.");
+            } else if (action === "revoke") {
+                setToastMessage("Access permission revoked.");
+            }
+            setTimeout(() => setToastMessage(""), 5000);
+        } catch (err) {
+            console.error(`Failed to ${action} access request:`, err);
+            alert(`Unable to ${action} access request. Please try again.`);
         }
     };
 
-    const handleToggleRead = (id) => {
-        const updated = notifications.map(n => {
-            if (n.id === id) return { ...n, unread: !n.unread };
-            return n;
-        });
-        saveNotifs(updated);
+    const handleMarkAllRead = async () => {
+        try {
+            await markAllNotificationsRead();
+            setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
+            setToastMessage("All notifications marked as read.");
+            setTimeout(() => setToastMessage(""), 4000);
+        } catch (err) {
+            console.error("Failed to mark all as read:", err);
+        }
     };
 
-    const handleDelete = (id) => {
-        const updated = notifications.filter(n => n.id !== id);
-        saveNotifs(updated);
+    const handleClearAll = async () => {
+        if (window.confirm("Are you sure you want to dismiss all notifications?")) {
+            try {
+                await clearAllNotifications();
+                setNotifications([]);
+                setToastMessage("All notifications cleared.");
+                setTimeout(() => setToastMessage(""), 4000);
+            } catch (err) {
+                console.error("Failed to clear notifications:", err);
+            }
+        }
+    };
+
+    const handleToggleRead = async (id) => {
+        const target = notifications.find(n => n.id === id);
+        if (!target) return;
+        const nextState = !target.is_read;
+        try {
+            await toggleNotificationRead(id, nextState);
+            setNotifications(prev => prev.map(n => {
+                if (n.id === id) return { ...n, is_read: nextState };
+                return n;
+            }));
+        } catch (err) {
+            console.error("Failed to toggle notification:", err);
+        }
+    };
+
+    const handleDelete = async (id) => {
+        try {
+            await deleteNotification(id);
+            setNotifications(prev => prev.filter(n => n.id !== id));
+        } catch (err) {
+            console.error("Failed to delete notification:", err);
+        }
     };
 
     // Filter notifications
     const filteredList = notifications.filter(item => {
+        const itemType = item.notification_type || item.type || "system";
+        const isUnread = !item.is_read;
         if (filterCategory === "all") return true;
-        if (filterCategory === "unread") return item.unread;
-        return item.type === filterCategory;
+        if (filterCategory === "unread") return isUnread;
+        return itemType === filterCategory;
     });
 
-    const unreadCount = notifications.filter(n => n.unread).length;
+    const unreadCount = notifications.filter(n => !n.is_read).length;
 
     const renderTypeIcon = (type) => {
         switch (type) {
@@ -231,6 +247,59 @@ function Notifications() {
                         </div>
                     )}
 
+                    {/* Pending Doctor Access Requests Alert Section */}
+                    {accessRequests.filter(r => r.status === "pending").length > 0 && (
+                        <div className="pending-doctor-requests-section">
+                            <div className="pdr-header">
+                                <ShieldCheck size={22} className="pdr-icon" />
+                                <div>
+                                    <h3>Doctor Access Requests Awaiting Your Permission</h3>
+                                    <p>The following healthcare providers have requested permission to view your medical records and vitals. Only approve providers you trust.</p>
+                                </div>
+                            </div>
+                            <div className="pdr-list">
+                                {accessRequests.filter(r => r.status === "pending").map((req) => (
+                                    <div key={req.id} className="pdr-card">
+                                        <div className="pdr-card-info">
+                                            <div className="pdr-avatar">
+                                                <Stethoscope size={24} />
+                                            </div>
+                                            <div className="pdr-details">
+                                                <h4>Dr. {req.doctor_details?.name || "Doctor"}</h4>
+                                                <div className="pdr-meta">
+                                                    <span className="pdr-badge-spec">{req.doctor_details?.specialization || "General Practice"}</span>
+                                                    <span className="pdr-hospital">{req.doctor_details?.hospital_name || "Hospital Partner"}</span>
+                                                    <span className="pdr-date"><Clock size={12} /> {formatTimeAgo(req.requested_at)}</span>
+                                                </div>
+                                                {req.notes && (
+                                                    <div className="pdr-reason">
+                                                        <strong>Reason:</strong> "{req.notes}"
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="pdr-actions">
+                                            <button 
+                                                className="btn-pdr-approve"
+                                                onClick={() => handleAccessAction(req.id, "approve")}
+                                            >
+                                                <UserCheck size={16} />
+                                                <span>Allow Permission</span>
+                                            </button>
+                                            <button 
+                                                className="btn-pdr-reject"
+                                                onClick={() => handleAccessAction(req.id, "reject")}
+                                            >
+                                                <UserX size={16} />
+                                                <span>Decline</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Filter Tabs Bar */}
                     <div className="notifs-filter-bar">
                         <div className="filter-tabs">
@@ -245,6 +314,13 @@ function Notifications() {
                                 onClick={() => setFilterCategory("unread")}
                             >
                                 Unread ({unreadCount})
+                            </button>
+                            <button
+                                className={`f-tab ${filterCategory === "doctor_permissions" ? "active" : ""}`}
+                                onClick={() => setFilterCategory("doctor_permissions")}
+                            >
+                                <ShieldCheck size={15} />
+                                Doctor Permissions ({accessRequests.filter(r => r.status === "approved").length} Active)
                             </button>
                             <button
                                 className={`f-tab ${filterCategory === "appointment" ? "active" : ""}`}
@@ -267,9 +343,97 @@ function Notifications() {
                         </div>
                     </div>
 
-                    {/* Notifications List */}
+                    {/* Notifications / Permissions List */}
                     <div className="notifs-list-section">
-                        {filteredList.length === 0 ? (
+                        {filterCategory === "doctor_permissions" ? (
+                            <div className="permissions-manager-view">
+                                <div className="pm-intro">
+                                    <h3>Healthcare Provider Access Authorizations</h3>
+                                    <p>Doctors can only review your personal medical records, health vitals, appointments, and prescriptions if you give explicit permission. You can revoke access at any time.</p>
+                                </div>
+                                {accessRequests.length === 0 ? (
+                                    <div className="no-notifs-card">
+                                        <div className="no-notif-icon-wrap">
+                                            <ShieldCheck size={48} />
+                                        </div>
+                                        <h3>No Doctor Permissions on File</h3>
+                                        <p>No healthcare providers have requested or been granted access to your medical records yet.</p>
+                                    </div>
+                                ) : (
+                                    <div className="permissions-cards-grid">
+                                        {accessRequests.map((req) => (
+                                            <div key={req.id} className={`perm-card status-${req.status}`}>
+                                                <div className="perm-card-head">
+                                                    <div className="perm-doc-avatar">
+                                                        <Stethoscope size={22} />
+                                                    </div>
+                                                    <div className="perm-doc-meta">
+                                                        <h4>Dr. {req.doctor_details?.name || "Doctor"}</h4>
+                                                        <span className="perm-doc-spec">{req.doctor_details?.specialization || "General Medicine"}</span>
+                                                        <span className="perm-doc-hosp">{req.doctor_details?.hospital_name || "Hospital Partner"}</span>
+                                                    </div>
+                                                    <div className={`perm-status-pill ${req.status}`}>
+                                                        {req.status === "approved" && "Active Access"}
+                                                        {req.status === "pending" && "Pending Approval"}
+                                                        {req.status === "rejected" && "Declined"}
+                                                        {req.status === "revoked" && "Revoked"}
+                                                    </div>
+                                                </div>
+                                                <div className="perm-card-body">
+                                                    {req.notes && (
+                                                        <p className="perm-reason"><strong>Reason for Request:</strong> "{req.notes}"</p>
+                                                    )}
+                                                    <div className="perm-timestamps">
+                                                        <span>Requested: {new Date(req.requested_at).toLocaleDateString()}</span>
+                                                        {req.responded_at && (
+                                                            <span>Responded: {new Date(req.responded_at).toLocaleDateString()}</span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <div className="perm-card-actions">
+                                                    {req.status === "approved" && (
+                                                        <button 
+                                                            className="btn-perm-revoke"
+                                                            onClick={() => handleAccessAction(req.id, "revoke")}
+                                                        >
+                                                            <UserX size={15} />
+                                                            <span>Revoke Access</span>
+                                                        </button>
+                                                    )}
+                                                    {req.status === "pending" && (
+                                                        <>
+                                                            <button 
+                                                                className="btn-pdr-approve"
+                                                                onClick={() => handleAccessAction(req.id, "approve")}
+                                                            >
+                                                                <UserCheck size={15} />
+                                                                <span>Allow Permission</span>
+                                                            </button>
+                                                            <button 
+                                                                className="btn-pdr-reject"
+                                                                onClick={() => handleAccessAction(req.id, "reject")}
+                                                            >
+                                                                <UserX size={15} />
+                                                                <span>Decline</span>
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                    {(req.status === "rejected" || req.status === "revoked") && (
+                                                        <button 
+                                                            className="btn-pdr-reapprove"
+                                                            onClick={() => handleAccessAction(req.id, "approve")}
+                                                        >
+                                                            <UserCheck size={15} />
+                                                            <span>Re-Authorize Access</span>
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        ) : filteredList.length === 0 ? (
                             <div className="no-notifs-card">
                                 <div className="no-notif-icon-wrap">
                                     <Bell size={48} />
@@ -287,61 +451,67 @@ function Notifications() {
                             </div>
                         ) : (
                             <div className="notifs-cards">
-                                {filteredList.map((item) => (
-                                    <div
-                                        key={item.id}
-                                        className={`notif-card ${item.unread ? "unread" : ""}`}
-                                    >
-                                        <div className="notif-card-left">
-                                            <div className={`notif-icon-box ${item.type}`}>
-                                                {renderTypeIcon(item.type)}
-                                            </div>
+                                {filteredList.map((item) => {
+                                    const isUnread = !item.is_read;
+                                    const itemType = item.notification_type || item.type || "system";
+                                    const timeDisplay = formatTimeAgo(item.created_at);
 
-                                            <div className="notif-content-wrap">
-                                                <div className="notif-title-row">
-                                                    <h4>{item.title}</h4>
-                                                    {item.unread && <span className="unread-dot" />}
+                                    return (
+                                        <div
+                                            key={item.id}
+                                            className={`notif-card ${isUnread ? "unread" : ""}`}
+                                        >
+                                            <div className="notif-card-left">
+                                                <div className={`notif-icon-box ${itemType}`}>
+                                                    {renderTypeIcon(itemType)}
                                                 </div>
 
-                                                <p className="notif-msg">{item.message}</p>
+                                                <div className="notif-content-wrap">
+                                                    <div className="notif-title-row">
+                                                        <h4>{item.title}</h4>
+                                                        {isUnread && <span className="unread-dot" />}
+                                                    </div>
 
-                                                <div className="notif-meta-row">
-                                                    <span className="notif-time">
-                                                        <Clock size={13} /> {item.time}
-                                                    </span>
-                                                    <span className="notif-category-badge">
-                                                        {item.type.toUpperCase()}
-                                                    </span>
+                                                    <p className="notif-msg">{item.message}</p>
+
+                                                    <div className="notif-meta-row">
+                                                        <span className="notif-time">
+                                                            <Clock size={13} /> {timeDisplay}
+                                                        </span>
+                                                        <span className="notif-category-badge">
+                                                            {itemType.toUpperCase()}
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </div>
+
+                                            <div className="notif-card-right">
+                                                {item.link && (
+                                                    <Link to={item.link} className="notif-action-link">
+                                                        <span>View</span>
+                                                        <ChevronRight size={16} />
+                                                    </Link>
+                                                )}
+
+                                                <button
+                                                    className="btn-toggle-read"
+                                                    onClick={() => handleToggleRead(item.id)}
+                                                    title={isUnread ? "Mark as Read" : "Mark as Unread"}
+                                                >
+                                                    <CheckCheck size={17} color={isUnread ? "#2563eb" : "#94a3b8"} />
+                                                </button>
+
+                                                <button
+                                                    className="btn-delete-notif"
+                                                    onClick={() => handleDelete(item.id)}
+                                                    title="Dismiss notification"
+                                                >
+                                                    <X size={17} />
+                                                </button>
+                                            </div>
                                         </div>
-
-                                        <div className="notif-card-right">
-                                            {item.link && (
-                                                <Link to={item.link} className="notif-action-link">
-                                                    <span>View</span>
-                                                    <ChevronRight size={16} />
-                                                </Link>
-                                            )}
-
-                                            <button
-                                                className="btn-toggle-read"
-                                                onClick={() => handleToggleRead(item.id)}
-                                                title={item.unread ? "Mark as Read" : "Mark as Unread"}
-                                            >
-                                                <CheckCheck size={17} color={item.unread ? "#2563eb" : "#94a3b8"} />
-                                            </button>
-
-                                            <button
-                                                className="btn-delete-notif"
-                                                onClick={() => handleDelete(item.id)}
-                                                title="Dismiss notification"
-                                            >
-                                                <X size={17} />
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         )}
                     </div>

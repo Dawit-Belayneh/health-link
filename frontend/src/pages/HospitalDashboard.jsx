@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./HospitalDashboard.css";
 
 import Sidebar from "../components/Sidebar";
@@ -15,16 +17,40 @@ import DepartmentCard from "../components/hospital/DepartmentCard";
 import RevenueCard from "../components/hospital/RevenueCard";
 
 function HospitalDashboard() {
+    const navigate = useNavigate();
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    useEffect(() => {
+        const token = localStorage.getItem("access");
+        if (!token) {
+            navigate("/login");
+            return;
+        }
+
+        const userStr = localStorage.getItem("user");
+        let user = null;
+        try {
+            user = userStr ? JSON.parse(userStr) : null;
+        } catch {
+            user = null;
+        }
+
+        if (user && user.role !== "admin" && !user.is_admin) {
+            if (user.role === "doctor" || user.role === "hospital_staff") {
+                navigate("/doctor/dashboard");
+            } else {
+                navigate("/patient/dashboard");
+            }
+            return;
+        }
+    }, [navigate]);
 
     return (
-
         <div className="hospital-dashboard">
-
-            <Sidebar />
+            <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
             <main className="hospital-main">
-
-                <Topbar />
+                <Topbar onToggleSidebar={() => setSidebarOpen(prev => !prev)} />
 
                 <WelcomeBanner />
 
