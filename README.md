@@ -39,6 +39,46 @@ graph TD
 
 ---
 
+## 📸 Application Preview & Screenshots
+
+Explore the key interfaces of the HealthLink ecosystem across Patient, Doctor, and Hospital Administrator workflows:
+
+### 1. Landing & Discovery Page
+Modern, responsive homepage showcasing healthcare features, service statistics, and direct portals for patients, clinicians, and administration.
+![Landing Page](docs/screenshots/01_landing_page.png)
+
+---
+
+### 2. Multi-Step Patient Onboarding & Clinical Intake
+Interactive patient registration capturing contact information, blood group, emergency contacts, and comprehensive medical history questionnaires with comfortable icon ergonomics.
+![Patient Registration](docs/screenshots/02_signup_page.png)
+
+---
+
+### 3. Role-Based Authentication Hub
+Unified security portal supporting isolated login pathways with distinct credential policies for Patients, Medical Doctors, and Hospital Admins.
+![Role Authentication](docs/screenshots/03_login_page.png)
+
+---
+
+### 4. Patient Health Portal & Vitals Dashboard
+Patient self-service command center displaying dynamic vitals (blood pressure, heart rate, blood glucose), upcoming appointments, certified medical records, and doctor access request approvals.
+![Patient Dashboard](docs/screenshots/04_patient_dashboard.png)
+
+---
+
+### 5. Doctor Clinical Workspace & Emergency Override
+Clinical hub for physicians to manage active caseloads, record diagnoses, write prescriptions, and request access to external patient histories—including the verified lifesaver **Emergency Access Protocol**.
+![Doctor Dashboard](docs/screenshots/05_doctor_dashboard.png)
+
+---
+
+### 6. Hospital Administration Console
+Administrative control center with hospital-scoped oversight for staff rosters, doctor credentialing, license tracking, and certified institutional record monitoring.
+![Hospital Admin Dashboard](docs/screenshots/06_hospital_admin_dashboard.png)
+
+---
+
 ## 🔐 Role-Based Access Control (RBAC) Architecture
 
 HealthLink enforces a 3-tier separation of duties across all endpoints and UI views:
